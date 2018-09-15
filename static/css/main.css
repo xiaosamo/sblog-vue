@@ -1,0 +1,116 @@
+body{
+    font-size: 16px;
+    background: #f6f6f6;
+    font-family: 微软雅黑;
+}
+ul{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.navbar{
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    background-clip: content-box;
+    background: #fff;
+
+    z-index: 100;
+
+    margin: 0 auto;
+}
+
+
+
+
+.navbar .nav-right{
+    position: relative;
+    padding: 0;
+
+    width: auto;
+    line-height: 100%;
+}
+
+#img {
+    margin: 0;
+}
+
+
+
+.navbar-brand{
+    font-size: 24px;
+    /*color: #00a7d0;*/
+    /*font-family: "Helvetica", "Arial", "serif";*/
+}
+/*用户头像*/
+.user-img{
+    height: 50px;
+    cursor: pointer;
+    padding: 0;
+}
+
+#search{
+    font-size: 16px;
+    width: 300px;
+    background: #f6f6f6;
+    /*position: relative;*/
+}
+.search-btn{
+    color: #c0c0c0;
+}
+
+/*尾部*/
+footer{
+    margin-top: 25px;
+    /*background: #;*/
+    height: 70px;
+}
+.footer{
+    height: 100%;
+    border-top: 1px solid #ccc;
+}
+.footer p{
+    line-height: 70px;
+    text-align: center;
+    margin: 0 auto;
+}
+
+/*全局*/
+small{
+    color: #969696;
+}
+
+a{
+    text-decoration: none;
+    color:#333;
+}
+
+
+.fa-bell{
+    position:relative;
+    font-size: 22px;
+}
+
+.tip {
+    position: absolute;
+    bottom: 50%;
+    left: 50%;
+    padding: 0 4px;
+    font-size: 11px;
+    color: #fff;
+    background-color: #f1403c;
+    border: 2px solid #fff;
+    border-radius: 20px;
+    display: inline-block;
+    line-height: 1.5;
+    vertical-align: middle;
+    white-space: nowrap;
+    min-width: 20px;
+    text-align: center;
+}
+
+.dropdown .img-circle{
+    padding: 0 15px;
+}
+
+#login {
+  color: #0084ff;
+}

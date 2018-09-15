@@ -1,0 +1,276 @@
+.left-text{
+  background: #f6f6f6;
+
+  height: auto;
+  margin: 0 auto;
+  padding: 0;
+  /*margin-right: 20px;*/
+}
+.right-text{
+  /*float: right;*/
+  /*background: green;*/
+  height: auto;
+  padding-bottom: 30px;
+
+}
+
+
+#content{
+  margin-top: 12px;
+  /*background: #000;*/
+  background: #f6f6f6;
+
+  /*margin: 0 auto;*/
+  /*padding: 0;*/
+}
+.blog-content{
+  width: 100%;
+  /*background: blue;*/
+  height: auto;
+
+}
+
+.blog-content>p{
+  /*background: blue;*/
+  height: auto;
+  background: #ccc;
+
+}
+
+.hot-user>span:first-child, .hot-tag>span:first-child,.article-category>span:first-child{
+  font-weight: bold;
+  /*margin-top: 5px;*/
+  /*font-size: 17px;*/
+  /*color: red;*/
+}
+
+
+.hot-tag .list-group{
+  margin-top: 7px;
+}
+
+/*文章分类,热门标签，热门用户*/
+.article-category,.hot-tag,.hot-user{
+  margin-top: 15px;
+  /*background: #e73f7c;*/
+  background: #fff;
+  /*padding-top: 10px;*/
+  padding: 3%;
+
+  height: auto;
+
+}
+.hot-user{
+  margin-top: 2px;
+}
+
+
+.lists .item{
+  /*border: 1px solid #000;*/
+  /*width: 80%;*/
+  /*margin-top: 20px;*/
+  /*background: #f6f6f6;*/
+
+  margin-bottom: 20px;
+}
+/**/
+
+.article-category .list-group {
+  background: #ccc;
+  margin-top: 8px;
+
+
+}
+.article-category .list-group>ul li{
+  /*border-top: none;*/
+
+}
+
+
+
+#content{
+  /*background: #000;*/
+  background: #f6f6f6;
+
+}
+
+.content .item img{
+  display: inline;
+  /*display: block;*/
+  width: 40px;
+  height: 40px;
+  /*border:1px solid #ddd;*/
+}
+.content .item h3{
+  display: inline;
+
+}
+.content .item .date{
+  display: block;
+  height: 20px;
+  line-height: 20px;
+  color: #999;
+}
+.opacity{
+  -webkit-animation: opacity 0.3s linear;
+  animation: opacity 0.3s linear;
+}
+@-webkit-keyframes opacity {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+@keyframes opacity {
+  0% {
+    opacity:0;
+  }
+  100% {
+    opacity:1;
+  }
+}
+.footer{
+  /*position: fixed;*/
+  left: 0;
+  bottom: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  /*display: flex;*/
+  /*width: 100%;*/
+  /*height: 50px;*/
+}
+.footer a{
+  position: relative;
+  display: block;
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+  -ms-flex: 1;
+  flex: 1;
+  line-height: 40px;
+  text-align: center;
+  color: #666;
+  background-color: #eee;
+  text-decoration: none;
+}
+.footer a:before{
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 1px;
+  height: 20px;
+  background-color: #ccc;
+}
+.footer a:first-child:before{
+  display: none;
+}
+
+/*文章部分*/
+.article-card{
+  /*background: #ccc;*/
+  background: #ffffff;
+
+  width: 100%;
+  /*max-width: 100%;*/
+  padding: 1.5%;
+
+}
+
+.article-card .article-content{
+  margin-top: 14px;
+  /*background: #005cbf;*/
+  margin-bottom: 8px;
+  /*font-size: 16px;*/
+  color: #1a1a1a;
+  /*padding: 0;*/
+  /*font-size: 20px;*/
+  /*font-family: KaiTi;*/
+  /*字体间距*/
+  letter-spacing: 0.03em;
+
+  font-weight: 400;
+  /*line-height: 100%;*/
+
+
+}
+.article-img{
+  border: none;
+  padding: 0;
+  /*去掉圆角*/
+  border-radius: 0;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.content .lists a{
+  text-decoration: none;
+
+}
+.article-user-img{
+  margin-right: 5px;
+  margin-bottom: 7px;
+}
+
+.article-type{
+  /*color: #ccc;*/
+  float: right;
+  margin-right: 8px;
+}
+.article{
+  margin-top: 12px;
+
+
+  /*word-wrap:break-word;*/
+  /*word-break:break-all;*/
+  /*overflow: hidden;!*这个参数根据需要来绝对要不要*!*/
+}
+/*文章部分结束*/
+
+
+.hot-user ul{
+  /*margin-top: 3px;*/
+
+  /*background: #f0f0f0;*/
+  /*margin: 5px auto 0 auto;*/
+  padding: 0;
+  /*height: 50px;*/
+}
+.hot-user ul li{
+  margin-top: 10px;
+  list-style-type: none;
+  /*display: inline;*/
+}
+
+.hot-user .img-circle{
+  height: 48px;
+  float: left;
+  /*margin: 3px;*/
+  margin-right: 7px;
+  /*display: inline;*/
+}
+.hot-user .hot-user-name {
+
+  margin-top: 3px;
+  /*margin-left: 3px;*/
+  display: block;
+}
+
+.hot-user .follow{
+  float: right;
+  margin-top: -10px;
+  margin-right: 7px;
+  color: #42c02e;
+
+}
+.hot-user small{
+  font-size: 14px;
+  color: #969696;
+}
+.hot-user a{
+  text-decoration: none;
+  color: #333;
+}
+
