@@ -51,18 +51,14 @@
 
 <script>
   import Simditor from 'simditor'
-  import '../../../static/simditor/styles/simditor.css'
-  import '../../../static/font-awesome-4.7.0/css/font-awesome.css'
-  import '../../../static/js/jquery-3.2.1'
-  import '../../../static/simditor/scripts/module'
-  import '../../../static/simditor/scripts/hotkeys'
-  import '../../../static/simditor/scripts/uploader'
-  import '../../../static/simditor/scripts/simditor'
-  import '../../../static/toastr/toastr.css'
-  import '../../../static/toastr/toastr.min'
-  import '../../../static/js/progressbar'
+  import '@/styles/simditor/styles/simditor.css'
+  import '@/styles/simditor/scripts/module'
+  import '@/styles/simditor/scripts/hotkeys'
+  import '@/styles/simditor/scripts/uploader'
+  import '@/styles/simditor/scripts/simditor'
+  import '@/styles/js/progressbar'
   // 引入自己的js方法
-  import {matchType} from '../../utils/util'
+  import {matchType} from '@/utils/util'
 
   export default {
     name: 'update',

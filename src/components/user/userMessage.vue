@@ -38,17 +38,9 @@
 </template>
 
 <script>
-  import header from '../../components/header/header'
-  import '../../../static/bootstrap/css/bootstrap.css'
-  import '../../../static/bootstrap/css/bootstrap-theme.css'
-  import '../../../static/css/dropload.css'
-  import '../../../static/font-awesome-4.7.0/css/font-awesome.css'
-  import '../../../static/css/main.css'
-  import '../../../static/toastr/toastr.css'
-  import '../../../static/js/jquery-3.2.1'
-  import '../../../static/bootstrap/js/bootstrap'
-  import {formatTime} from '../../utils/time'
-  import * as toastr from '../../../static/toastr/toastr.min'
+  import header from '@/components/header/header'
+  import {formatTime} from '@/utils/time'
+  import * as toastr from '@/styles/toastr/toastr.min'
 
   export default {
       name: 'userMessage',

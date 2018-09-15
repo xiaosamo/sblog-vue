@@ -70,13 +70,13 @@
 </template>
 
 <script>
-  import header from './header'
-  import '../../../static/bootstrap/css/bootstrap.css'
-  import '../../../static/bootstrap/css/bootstrap-theme.css'
-  import '../../../static/css/dropload.css'
-  import '../../../static/font-awesome-4.7.0/css/font-awesome.css'
-  import '../../../static/css/main.css'
-  import '../../../static/css/index.css'
+  import header from '@/components/header/header'
+  // import '../../../static/bootstrap/css/bootstrap.css'
+  // import '../../../static/bootstrap/css/bootstrap-theme.css'
+  // import '../../../static/css/dropload.css'
+  // import '../../../static/font-awesome-4.7.0/css/font-awesome.css'
+  // import '../../../static/css/main.css'
+  // import '../../../static/css/index.css'
   export default {
     name: 'header',
     components: {

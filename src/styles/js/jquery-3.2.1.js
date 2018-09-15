@@ -11,6 +11,7 @@
  *
  * Date: 2017-03-20T18:59Z
  */
+/* eslint-disable no-alert, no-console */
 ( function( global, factory ) {
 
 	"use strict";
@@ -10251,3 +10252,4 @@ if ( !noGlobal ) {
 
 return jQuery;
 } );
+/* eslint-disable no-alert, no-console */

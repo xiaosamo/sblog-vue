@@ -205,19 +205,11 @@
 </template>
 
 <script>
-  import header from '../header/header'
-  import '../../../static/bootstrap/css/bootstrap.css'
-  import '../../../static/bootstrap/css/bootstrap-theme.css'
-  import '../../../static/css/AdminLTE.css'
-  import '../../../static/font-awesome-4.7.0/css/font-awesome.css'
-  import '../../../static/css/main.css'
-  import '../../../static/toastr/toastr.css'
-  import '../../../static/toastr/toastr.min'
-  import '../../../static/js/jquery-3.2.1'
-  import '../../../static/bootstrap/js/bootstrap'
-  import '../../../static/js/sockjs.min'
-  import '../../../static/js/stomp'
-  import {formatTime} from '../../utils/time'
+  import header from '@/components/header/header'
+  import '@/styles/css/AdminLTE.css'
+  // import '@/styles/js/sockjs.min'
+  // import '@/styles/js/stomp'
+  import {formatTime} from '@/utils/time'
   export default {
     name: 'chat',
     components: {

@@ -50,11 +50,9 @@
 <script>
   // 1.导入header.vue
   // import header from './header/header'
-  import '../../static/css/login.css'
-  import '../../static/css/animate.min.css'
-  import '../../static/toastr/toastr.css'
-  import '../../static/js/jquery-3.2.1'
-  import * as toastr from '../../static/toastr/toastr.min'
+  import '@/styles/css/login.css'
+  import '@/styles/css/animate.min.css'
+  import * as toastr from '@/styles/toastr/toastr.min'
   export default {
     name: 'register',
     components: {
