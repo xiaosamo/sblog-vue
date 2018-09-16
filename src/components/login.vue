@@ -47,8 +47,8 @@
 <script>
   // 1.导入header.vue
   // import header from './header/header'
-  import '@/styles/css/login.css'
-  import '@/styles/css/animate.min.css'
+  // import '@/styles/css/login.css'
+  // import '@/styles/css/animate.min.css'
   import * as toastr from '@/styles/toastr/toastr.min'
   export default {
     name: 'login',
@@ -99,6 +99,9 @@
 </script>
 
 <style scoped>
+  @import "../styles/css/login.css";
+  /*@import '../styles/css/animate.min.css';*/
+
   .login {
     width: 21.375rem
   }

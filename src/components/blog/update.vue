@@ -51,12 +51,12 @@
 
 <script>
   import Simditor from 'simditor'
-  import '@/styles/simditor/styles/simditor.css'
-  import '@/styles/simditor/scripts/module'
-  import '@/styles/simditor/scripts/hotkeys'
-  import '@/styles/simditor/scripts/uploader'
-  import '@/styles/simditor/scripts/simditor'
-  import '@/styles/js/progressbar'
+  // import '@/styles/simditor/styles/simditor.css'
+  // import '@/styles/simditor/scripts/module'
+  // import '@/styles/simditor/scripts/hotkeys'
+  // import '@/styles/simditor/scripts/uploader'
+  // import '@/styles/simditor/scripts/simditor'
+  // import '@/styles/js/progressbar'
   // 引入自己的js方法
   import {matchType} from '@/utils/util'
 

@@ -206,7 +206,7 @@
 
 <script>
   import header from '@/components/header/header'
-  import '@/styles/css/AdminLTE.css'
+  // import '@/styles/css/AdminLTE.css'
   // import '@/styles/js/sockjs.min'
   // import '@/styles/js/stomp'
   import {formatTime} from '@/utils/time'
