@@ -2,200 +2,215 @@
   <div>
     <!--导航条-->
     <v-header></v-header>
-    <!--用户头部，背景图片-->
-    <div class="container  user-header" :style="{'background-image': 'url(' + userPage.bgImg + ')'}">
+    <div id="content" style="min-width: 1000px">
+      <!--用户头部，背景图片-->
+      <div class="container  user-header" :style="{'background-image': 'url(' + userPage.bgImg + ')'}">
+        <div class="row" style="position: relative;">
+          <a class="">
+            <!--<img class="img-rounded" :src="userPage.img" alt="">-->
+            <b-img slot="aside" class="img-rounded" :src="userPage.img" />
+          </a>
 
-      <div class="row">
-        <a class="">
-          <img class="img-rounded" :src="userPage.img" alt="">
-        </a>
+          <div class="user-header-info">
+            <!--<input type="text" id="bloggerId" value="${bloggerHome.bloggerId}"  hidden>-->
+            <!--<input type="text" id="homeUsername" value="${bloggerHome.bloggerUsername}"  hidden>-->
+            <!--<input type="text" id="curUsername" value="${blogger.bloggerUsername}"  hidden>-->
+            <!--<input type="text" id="bgId" value="${bloggerHome.bloggerBgImg}"  hidden>-->
+            <div class="user-follow">
+              <h2>{{userPage.name}}</h2>
 
-        <div class="user-header-info">
-          <!--<input type="text" id="bloggerId" value="${bloggerHome.bloggerId}"  hidden>-->
-          <!--<input type="text" id="homeUsername" value="${bloggerHome.bloggerUsername}"  hidden>-->
-          <!--<input type="text" id="curUsername" value="${blogger.bloggerUsername}"  hidden>-->
-          <!--<input type="text" id="bgId" value="${bloggerHome.bloggerBgImg}"  hidden>-->
-          <div class="user-follow">
-            <h2>{{userPage.name}}</h2>
+              <b-button class="chat" variant="success"  id="follow-btn" v-if="!isUser && follow" @click="doFollow(userPage.username)">
+                已关注 <i class="fa fa-check"></i>
+              </b-button>
 
-            <!--<div>-->
-            <button class="btn btn-success chat" id="follow-btn" v-if="!isUser" @click="doFollow(userPage.username)">
-              <span v-if="follow">已关注 <i class="fa fa-check"></i> </span>
-              <span v-else><i class="fa fa-plus"></i>关注</span>
-            </button>
+              <b-button class="chat" variant="outline-success"  id="follow-btn" v-if="!isUser && !follow" @click="doFollow(userPage.username)">
+                <span>关注</span>
+              </b-button>
+              <!--<button class="btn btn-success chat" id="follow-btn" v-if="!isUser" @click="doFollow(userPage.username)">-->
+                <!--<span v-if="follow">已关注 <i class="fa fa-check"></i> </span>-->
+                <!--<span v-else><i class="fa fa-plus"></i>关注</span>-->
+              <!--</button>-->
 
-            <!--<button class="btn btn-default " if="(${bloggerHome.bloggerId} != ${blogger.bloggerId})" >-->
-            <!--私信-->
-            <!--</button>-->
-            <a :href="'/chat/'+ userPage.id" v-if="!isUser" class="btn btn-default chat">私信</a>
-            <!--</div>-->
+              <!--<b-link href="#foo" class="chat" variant="default">私信</b-link>-->
+              <b-button v-if="!isUser" class="chat" variant="default" @click="toChat(userPage.id)">私信</b-button>
+              <!--<a :href="'/chat/'+ userPage.id" v-if="!isUser" class="btn btn-default chat">私信</a>-->
+            </div>
+            <p>{{userPage.sign}}</p>
+            <!--上传组件-->
+            <input type="file" id="file" ref="file" @change="upload($event)">
           </div>
-          <p>{{userPage.sign}}</p>
-          <!--上传组件-->
-          <input type="file" id="file" ref="file" @change="upload($event)">
+
+          <!--<b-button-group v-if="isUser" style="position: absolute;right: 10px; top:190px;">-->
+          <div v-if="isUser" style="position: absolute;right: 10px; top:190px;">
+            <b-button variant="outline-primary" class="btn-edit" @click="changeUrl('/user/settings/profile')">
+              编辑资料
+            </b-button>
+            <b-button variant="outline-primary" class="btn-edit" @click="changeBgImg">更换背景</b-button>
+
+            <!--<b-button>Button 2</b-button>-->
+            <!--<b-button>Button 2</b-button>-->
+          </div>
+          <!--<a href="/user/settings/profile" v-if="isUser"  class="btn  edit">-->
+            <!--编辑资料-->
+          <!--</a>-->
+
+          <!--<a href="javascript:void(0)" id="background"  class="btn  edit" v-if="isUser" @click="changeBgImg">-->
+            <!--更换背景-->
+          <!--</a>-->
         </div>
 
-        <a href="/user/settings/profile" v-if="isUser"  class="btn  edit">
-          编辑资料
-        </a>
-        <a href="javascript:void(0)" id="background"  class="btn  edit" v-if="isUser" @click="changeBgImg">
-          更换背景
-        </a>
       </div>
-      <!--<div class="jumbotron">-->
-      <!--<h1>Hello, world!</h1>-->
-      <!--<p>...</p>-->
-      <!--<p><a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a></p>-->
-      <!--</div>-->
-    </div>
-    <!--用户内容区-->
-    <div class="container user-content">
-      <!-- Nav tabs -->
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#article" aria-controls="article" role="tab" data-toggle="tab">我的文章</a></li>
-        <li role="presentation"><a href="#love" aria-controls="love" role="tab" data-toggle="tab">喜欢</a></li>
-        <li role="presentation"><a href="#follow" aria-controls="follow" role="tab" data-toggle="tab">关注</a></li>
-        <li role="presentation"><a href="#comment" aria-controls="comment" role="tab" data-toggle="tab">评论</a></li>
-      </ul>
+      <!--用户内容区-->
+      <div class="container user-content">
 
-      <!-- Tab panes -->
-      <div class="tab-content">
+        <!-- Tab panes -->
+        <div class="tab-content">
 
-        <!--我的文章-->
-        <div role="tabpanel" class="tab-pane active lists" id="article">
-          <!--文章部分-->
-          <div class="item article-card" v-for="userArticle in userPage.userArticles" :key="userArticle.articleId">
-            <!--用户头像-->
-            <a :href="'/user/'+userArticle.userId">
-              <img class="img-circle user-img article-user-img" :src="userArticle.userImg">
-            </a>
-            <span>
+          <b-tabs>
+            <b-tab title="我的文章" active>
+              <!--我的文章-->
+              <div role="tabpanel" class="tab-pane active lists" id="article">
+                <!--文章部分-->
+                <div class="item article-card" v-for="userArticle in userPage.userArticles" :key="userArticle.articleId">
+                  <!--用户头像-->
+                  <a :href="'/user/'+userArticle.userId">
+                    <img class="img-circle user-img article-user-img" :src="userArticle.userImg">
+                  </a>
+                  <span>
                         <a :href="'/user/'+userArticle.userId">{{userArticle.userName}}</a>
                         <small>{{userArticle.userSign}}</small>
                 </span>
-            <div class="article">
-              <h3 class="title"><a :href="'/article/'+userArticle.articleId">{{userArticle.title}}</a></h3>
-              <small class="article-type">{{userArticle.categoryName}}</small>
-              <div class="article-content lead" >
-                <a :href="'/article/'+userArticle.articleId">
-                  {{userArticle.summary}}
-                </a>
+                  <div class="article">
+                    <h3 class="title"><a :href="'/article/'+userArticle.articleId">{{userArticle.title}}</a></h3>
+                    <small class="article-type">{{userArticle.categoryName}}</small>
+                    <div class="article-content lead" >
+                      <a :href="'/article/'+userArticle.articleId">
+                        {{userArticle.summary}}
+                      </a>
+
+                    </div>
+                    <div class="container">
+                      <!--<span class="date">2014-14-14</span>-->
+                      <i class="fa  fa-eye">{{userArticle.showCount}}</i>
+                      <i class="fa  fa-comment-o">{{userArticle.commentCount}}</i>
+                      <i class="fa  fa-star">{{userArticle.loveCount}}</i>
+                      <i class="fa  fa-calendar">{{userArticle.createTime | dateFormat}}</i>
+                      <!--calendar-->
+                    </div>
+
+                  </div>
+
+                </div>
 
               </div>
-              <div class="container">
-                <!--<span class="date">2014-14-14</span>-->
-                <i class="fa  fa-eye">{{userArticle.showCount}}</i>
-                <i class="fa  fa-comment-o">{{userArticle.commentCount}}</i>
-                <i class="fa  fa-star">{{userArticle.loveCount}}</i>
-                <i class="fa  fa-calendar">{{userArticle.createTime | dateFormat}}</i>
-                <!--calendar-->
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-        <!--喜欢的-->
-        <div role="tabpanel" class="tab-pane" id="love">
-
-          <!--文章部分-->
-          <div class="item article-card" v-for="userLoveArticle in userPage.userLoveArticles" :key="userLoveArticle.articleId">
-            <!--用户头像-->
-            <a :href="'/user/'+userLoveArticle.userId">
-              <img class="img-circle user-img article-user-img" :src="userLoveArticle.userImg">
-            </a>
-            <span>
+            </b-tab>
+            <b-tab title="我喜欢的">
+              <!--喜欢的-->
+              <div role="tabpanel" class="tab-pane" id="love">
+                <!--文章部分-->
+                <div class="item article-card" v-for="userLoveArticle in userPage.userLoveArticles" :key="userLoveArticle.articleId">
+                  <!--用户头像-->
+                  <a :href="'/user/'+userLoveArticle.userId">
+                    <img class="img-circle user-img article-user-img" :src="userLoveArticle.userImg">
+                  </a>
+                  <span>
                         <a :href="'/user/'+userLoveArticle.userId">{{userLoveArticle.userName}}</a>
                         <small>{{userLoveArticle.userSign}}</small>
                 </span>
-            <div class="article">
-              <h3 class="title"><a :href="'/article/'+userLoveArticle.articleId">{{userLoveArticle.title}}</a></h3>
-              <small class="article-type">{{userLoveArticle.categoryName}}</small>
-              <div class="article-content lead" >
-                <a :href="'/article/'+userLoveArticle.articleId">
-                  {{userLoveArticle.summary}}
-                </a>
+                  <div class="article">
+                    <h3 class="title"><a :href="'/article/'+userLoveArticle.articleId">{{userLoveArticle.title}}</a></h3>
+                    <small class="article-type">{{userLoveArticle.categoryName}}</small>
+                    <div class="article-content lead" >
+                      <a :href="'/article/'+userLoveArticle.articleId">
+                        {{userLoveArticle.summary}}
+                      </a>
+
+                    </div>
+                    <div class="container">
+                      <!--<span class="date">2014-14-14</span>-->
+                      <i class="fa  fa-eye">{{userLoveArticle.showCount}}</i>
+                      <i class="fa  fa-comment-o">{{userLoveArticle.commentCount}}</i>
+                      <i class="fa  fa-star">{{userLoveArticle.loveCount}}</i>
+                      <i class="fa  fa-calendar">{{userLoveArticle.createTime | dateFormat}}</i>
+                      <!--calendar-->
+                    </div>
+
+                  </div>
+
+                </div>
 
               </div>
-              <div class="container">
-                <!--<span class="date">2014-14-14</span>-->
-                <i class="fa  fa-eye">{{userLoveArticle.showCount}}</i>
-                <i class="fa  fa-comment-o">{{userLoveArticle.commentCount}}</i>
-                <i class="fa  fa-star">{{userLoveArticle.loveCount}}</i>
-                <i class="fa  fa-calendar">{{userLoveArticle.createTime | dateFormat}}</i>
-                <!--calendar-->
-              </div>
-
-            </div>
-
-          </div>
-
-        </div>
-        <!--关注的-->
-        <div role="tabpanel" class="tab-pane" id="follow">
-
-          <!--关注用户-->
-          <div class="item article-card" v-for="userFollow in userPage.followList" :key="userFollow.id">
-            <!--用户头像-->
-            <a :href="'/user/'+userFollow.id">
-              <img class="img-circle user-img article-user-img" :src="userFollow.img">
-            </a>
-            <span>
+            </b-tab>
+            <b-tab title="关注的人">
+              <!--关注的-->
+              <div role="tabpanel" class="tab-pane" id="follow">
+                <!--关注用户-->
+                <div class="item article-card" v-for="userFollow in userPage.followList" :key="userFollow.id">
+                  <!--用户头像-->
+                  <a :href="'/user/'+userFollow.id">
+                    <img class="img-circle user-img article-user-img" :src="userFollow.img">
+                  </a>
+                  <span>
                         <a :href="'/user/'+userFollow.id">{{userFollow.name}}</a>
                         <small>，{{userFollow.sign}}</small>
                 </span>
-            <a :href="'/chat/'+ userFollow.id"  class="btn btn-default" id="chat-btn">私信</a>
+                  <a :href="'/chat/'+ userFollow.id"  class="btn btn-default" id="chat-btn">私信</a>
 
-            <button class="btn btn-success follow-btn"
-                    v-if="isUser"
-                    @mouseenter="mouseEnter($event)"
-                    @mouseleave="mouseLeave($event)"
-                    @click="doFollow(userFollow.username)">
-              已关注<i class="fa fa-check"></i>
-            </button>
+                  <button class="btn btn-success follow-btn"
+                          v-if="isUser"
+                          @mouseenter="mouseEnter($event)"
+                          @mouseleave="mouseLeave($event)"
+                          @click="doFollow(userFollow.username)">
+                    已关注<i class="fa fa-check"></i>
+                  </button>
 
-          </div>
+                </div>
 
-        </div>
-        <!--评论的-->
-        <div role="tabpanel" class="tab-pane" id="comment">
+              </div>
+            </b-tab>
+            <b-tab title="已评论的">
+              <!--评论的-->
+              <div role="tabpanel" class="tab-pane" id="comment">
 
-          <!--文章部分-->
-          <div class="item article-card" v-for="userCommentArticle in userPage.userCommentArticles" :key="userCommentArticle.articleId">
-            <!--用户头像-->
-            <a :href="'/user/'+userCommentArticle.userId">
-              <img class="img-circle user-img article-user-img" :src="userCommentArticle.userImg">
-            </a>
-            <span>
+                <!--文章部分-->
+                <div class="item article-card" v-for="userCommentArticle in userPage.userCommentArticles" :key="userCommentArticle.articleId">
+                  <!--用户头像-->
+                  <a :href="'/user/'+userCommentArticle.userId">
+                    <img class="img-circle user-img article-user-img" :src="userCommentArticle.userImg">
+                  </a>
+                  <span>
               <a :href="'/user/'+userCommentArticle.userId">{{userCommentArticle.userName}}</a>
               <small>{{userCommentArticle.userSign}}</small>
             </span>
-            <div class="article">
-              <h3 class="title"><a :href="'/article/'+userCommentArticle.articleId">{{userCommentArticle.title}}</a></h3>
-              <small class="article-type">{{userCommentArticle.categoryName}}</small>
-              <div class="article-content lead" >
-                <a :href="'/article/'+userCommentArticle.articleId">
-                  {{userCommentArticle.summary}}
-                </a>
+                  <div class="article">
+                    <h3 class="title"><a :href="'/article/'+userCommentArticle.articleId">{{userCommentArticle.title}}</a></h3>
+                    <small class="article-type">{{userCommentArticle.categoryName}}</small>
+                    <div class="article-content lead" >
+                      <a :href="'/article/'+userCommentArticle.articleId">
+                        {{userCommentArticle.summary}}
+                      </a>
+
+                    </div>
+                    <div class="container">
+                      <!--<span class="date">2014-14-14</span>-->
+                      <i class="fa  fa-eye">{{userCommentArticle.showCount}}</i>
+                      <i class="fa  fa-comment-o">{{userCommentArticle.commentCount}}</i>
+                      <i class="fa  fa-star">{{userCommentArticle.loveCount}}</i>
+                      <i class="fa  fa-calendar">{{userCommentArticle.createTime | dateFormat}}</i>
+                      <!--calendar-->
+                    </div>
+
+                  </div>
+
+                </div>
 
               </div>
-              <div class="container">
-                <!--<span class="date">2014-14-14</span>-->
-                <i class="fa  fa-eye">{{userCommentArticle.showCount}}</i>
-                <i class="fa  fa-comment-o">{{userCommentArticle.commentCount}}</i>
-                <i class="fa  fa-star">{{userCommentArticle.loveCount}}</i>
-                <i class="fa  fa-calendar">{{userCommentArticle.createTime | dateFormat}}</i>
-                <!--calendar-->
-              </div>
-
-            </div>
-
-          </div>
-
+            </b-tab>
+          </b-tabs>
         </div>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -239,6 +254,12 @@
 
     },
     methods: {
+      toChat: function (id) {
+        window.location.href = '/chat/' + id
+      },
+      changeUrl: function (url) {
+        window.location.href = url
+      },
       // 获取当前登入的用户
       getUserInfo: function () {
         console.log("get token=" + sessionStorage.getItem('token'));
@@ -368,8 +389,9 @@
 <style scoped>
   /*头部*/
   .user-header{
+    /*padding-top: 8px;*/
     /*overflow: hidden;*/
-    margin-top: 12px;
+    /*margin-top: 12px;*/
     background: #fff;
     height: 250px;
     /*background-size: 250px;*/
@@ -551,6 +573,7 @@
   }
 
   .chat{
+    /*color: #fff;*/
     margin-left: 15px;
     margin-bottom: 10px;
   }
@@ -560,6 +583,17 @@
   }
   #chat-btn{
     margin-left: 7px;
+  }
+  .btn-edit {
+    margin-right: 15px;
+    /*margin-top: 130px;*/
+    /*border-radius: 5px;*/
+    /*position: absolute;*/
+    /*height: 50px;*/
+    /*top: 50%;*/
+    /*left: 30%;*/
+    /*line-height: 250px;*/
+    float: right;
   }
 
 </style>

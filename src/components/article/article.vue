@@ -4,123 +4,106 @@
     <v-header></v-header>
     <!--博客内容-->
     <div class="container" id="content">
-
-      <div class="blog-header">
-        <h1 class="blog-title">{{article.title}}</h1>
-        <!--<input type="hidden" id="articleId" value="${article.articleId}" attr="articleId=${article.articleId}">-->
-        <!--<input type="hidden" id="username" value="${blogger.bloggerUsername}">-->
-        <!--<input type="hidden" id="isLove" value="${isLove}">-->
-        <!--<p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>-->
-      </div>
-
-      <div class="row">
-
-        <div class="col-sm-8 blog-main">
-          <div class="blog-post">
-            <div class="blog-top">
-              <a href="@{'/user/'+${articleBlogger.bloggerId}}">
-                <img class="img-circle user-img img"  :src="article.userImg"  alt="">
-              </a>
-              <!--<p class="blog-post-meta">2018-6-1 <a href="#"></a></p>-->
-
-              <a href="@{'/user/'+${articleBlogger.bloggerId}}" class="article-use">{{article.name}}</a>
-              <a :href="'/blog/edit/'+article.id" class="article-edit" v-if="isUser">编辑</a>
-              <a href="javascript:void(0)" id="user-delete" class="user-delete" v-if="isUser" @click="delArticle(article.id)">删除</a>
-
-              <small class="time">{{ article.createTime | dateFormat}}</small>
+        <div class="blog-header">
+          <h1 class="blog-title">{{article.title}}</h1>
+          <!--<input type="hidden" id="articleId" value="${article.articleId}" attr="articleId=${article.articleId}">-->
+          <!--<input type="hidden" id="username" value="${blogger.bloggerUsername}">-->
+          <!--<input type="hidden" id="isLove" value="${isLove}">-->
+          <!--<p class="lead blog-description">The official example template of creating a blog with Bootstrap.</p>-->
+        </div>
+        <div class="row">
+          <div class="col-sm-8 blog-main">
+            <div class="blog-post">
+              <div class="blog-top">
+                <a href="@{'/user/'+${articleBlogger.bloggerId}}">
+                  <img class="img-circle user-img img"  :src="article.userImg"  alt="">
+                </a>
+                <!--<p class="blog-post-meta">2018-6-1 <a href="#"></a></p>-->
+                <a href="@{'/user/'+${articleBlogger.bloggerId}}" class="article-use">{{article.name}}</a>
+                <a :href="'/blog/edit/'+article.id" class="article-edit" v-if="isUser">编辑</a>
+                <a href="javascript:void(0)" id="user-delete" class="user-delete" v-if="isUser" @click="delArticle(article.id)">删除</a>
+                <small class="time">{{ article.createTime | dateFormat}}</small>
+              </div>
+              <!--文章内容部分-->
+              <div id="main-content"  v-html="article.htmlContent">
+              </div><!-- /.blog-post -->
             </div>
-
-            <!--文章内容部分-->
-            <div id="main-content"  v-html="article.htmlContent">
-            </div><!-- /.blog-post -->
-
-          </div>
-          <!--<nav>-->
-          <!--<ul class="pager">-->
-
-          <!--<li><a href="#">上一篇</a></li>-->
-          <!--<li><a href="#">下一篇</a></li>-->
-          <!--</ul>-->
-          <!--</nav>-->
-
-          <!--喜欢按钮-->
-          <div class="btn like-group">
-            <a href="javascript:void(0)" id="loveArticle">
-              <!--喜欢的-->
-              <div v-if="article.isLove" id="Like" @click="love('delete', article.id)">
-              <i class="fa fa-heart"></i>    喜欢 | <span class="like-count">{{article.loveCount}}</span>
-              </div>
-              <!--没喜欢-->
-              <div v-else id="notLike" @click="love('increase', article.id)">
-                <i class="fa fa-heart-o" ></i>    喜欢 | <span class="like-count">{{article.loveCount}}</span>
-              </div>
-              <!--<div  id="Like">-->
-              <!--<i class="fa fa-heart-o"></i>    喜欢 |-->
-              <!--<span class="like-count" text="${article.articleLoveCount}">43</span>-->
-              <!--</div>-->
-            </a>
-          </div>
-
-          <!--评论-->
-          <div class="panel panel-primary comment">
-            <form onsubmit="return false;">
-              <textarea name="" id="comment" cols="" rows="" placeholder="写下你的评论..." v-model="message"></textarea>
-              <button type="button" class="btn btn-success" id="submitComment" @click="addComment">发布</button>
-            </form>
-
-          </div>
-
-          <!--评论列表-->
-          <div class="panel  comment-list">
-            <ul class="form-group">
-              <li v-for="comment in comments" :key="comment.id">
-                <a class="" href="@{'/user/'+${comment.bloggerId}}">
-                  <img class="img-circle user-img img"  :src="comment.userImg" alt="">
-                </a>
-                <a class="comment-user" href="@{'/user/'+${comment.bloggerId}}" >{{comment.userName}}</a>
-                <small text="${#dates.format(comment.createTime, 'yyyy-MM-dd HH:mm')}">2018-6-2 12:59</small>
-                <!--删除评论-->
-                <a class="comment-delete" href="javascript:void(0)" id="comment-delete" v-if="user.username === comment.username" @click="delComment(comment.id)">
-                  <i class="fa fa-trash-o"></i>
-                </a>
-                <p>{{comment.content}}</p>
-                <hr>
-              </li>
-
-            </ul>
-          </div>
-        </div><!-- /.blog-main -->
-
-        <!--文章右侧-->
-        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-          <div class="sidebar-module sidebar-module-inset">
-            <h4>关于作者</h4>
-            <p text="${articleBlogger.bloggerInfo}">我是一个来自外星人的嗷嗷？？</p>
-            <p if="(${#strings.isEmpty(articleBlogger.bloggerInfo)})">emmm还没有写个人介绍哦...</p>
-          </div>
-          <br>
-          <br>
-          <div class="sidebar-module">
-            <h4>最新文章</h4>
-            <ol class="list-unstyled">
-              <li each="otherArticle:${otherArticles}"><a href="@{'/article/'+${otherArticle.articleId}}" text="${otherArticle.articleTitle}">March 2014</a></li>
-
-            </ol>
-          </div>
-          <!--<br>-->
-          <!--<br>-->
-          <!--<div class="sidebar-module">-->
-          <!--<h4>查看主页</h4>-->
-          <!--<ol class="list-unstyled">-->
-          <!--<li><a href="#">GitHub</a></li>-->
-          <!--<li><a href="#">Twitter</a></li>-->
-          <!--<li><a href="#">Facebook</a></li>-->
-          <!--</ol>-->
-          <!--</div>-->
-        </div><!-- /.blog-sidebar -->
-
-      </div><!-- /.row -->
-
+            <!--<nav>-->
+            <!--<ul class="pager">-->
+            <!--<li><a href="#">上一篇</a></li>-->
+            <!--<li><a href="#">下一篇</a></li>-->
+            <!--</ul>-->
+            <!--</nav>-->
+            <!--喜欢按钮-->
+            <div class="btn like-group">
+              <a href="javascript:void(0)" id="loveArticle">
+                <!--喜欢的-->
+                <div v-if="article.isLove" id="Like" @click="love('delete', article.id)">
+                <i class="fa fa-heart"></i>    喜欢 | <span class="like-count">{{article.loveCount}}</span>
+                </div>
+                <!--没喜欢-->
+                <div v-else id="notLike" @click="love('increase', article.id)">
+                  <i class="fa fa-heart-o" ></i>    喜欢 | <span class="like-count">{{article.loveCount}}</span>
+                </div>
+                <!--<div  id="Like">-->
+                <!--<i class="fa fa-heart-o"></i>    喜欢 |-->
+                <!--<span class="like-count" text="${article.articleLoveCount}">43</span>-->
+                <!--</div>-->
+              </a>
+            </div>
+            <!--评论-->
+            <div class="panel panel-primary comment">
+              <form onsubmit="return false;">
+                <textarea name="" id="comment" cols="" rows="" placeholder="写下你的评论..." v-model="message"></textarea>
+                <button type="button" class="btn btn-success" id="submitComment" @click="addComment">发布</button>
+              </form>
+            </div>
+            <!--评论列表-->
+            <div class="panel  comment-list">
+              <ul class="form-group">
+                <li v-for="comment in comments" :key="comment.id">
+                  <a class="" href="@{'/user/'+${comment.bloggerId}}">
+                    <img class="img-circle user-img img"  :src="comment.userImg" alt="">
+                  </a>
+                  <a class="comment-user" href="@{'/user/'+${comment.bloggerId}}" >{{comment.userName}}</a>
+                  <small text="${#dates.format(comment.createTime, 'yyyy-MM-dd HH:mm')}">2018-6-2 12:59</small>
+                  <!--删除评论-->
+                  <a class="comment-delete" href="javascript:void(0)" id="comment-delete" v-if="user.username === comment.username" @click="delComment(comment.id)">
+                    <i class="fa fa-trash-o"></i>
+                  </a>
+                  <p>{{comment.content}}</p>
+                  <hr>
+                </li>
+              </ul>
+            </div>
+          </div><!-- /.blog-main -->
+          <!--文章右侧-->
+          <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+            <div class="sidebar-module sidebar-module-inset">
+              <h4>关于作者</h4>
+              <p text="${articleBlogger.bloggerInfo}">我是一个来自外星人的嗷嗷？？</p>
+              <p if="(${#strings.isEmpty(articleBlogger.bloggerInfo)})">emmm还没有写个人介绍哦...</p>
+            </div>
+            <br>
+            <br>
+            <div class="sidebar-module">
+              <h4>最新文章</h4>
+              <ol class="list-unstyled">
+                <li each="otherArticle:${otherArticles}"><a href="@{'/article/'+${otherArticle.articleId}}" text="${otherArticle.articleTitle}">March 2014</a></li>
+              </ol>
+            </div>
+            <!--<br>-->
+            <!--<br>-->
+            <!--<div class="sidebar-module">-->
+            <!--<h4>查看主页</h4>-->
+            <!--<ol class="list-unstyled">-->
+            <!--<li><a href="#">GitHub</a></li>-->
+            <!--<li><a href="#">Twitter</a></li>-->
+            <!--<li><a href="#">Facebook</a></li>-->
+            <!--</ol>-->
+            <!--</div>-->
+          </div><!-- /.blog-sidebar -->
+        </div><!-- /.row -->
     </div><!-- /.container -->
     <!--尾部-->
     <footer class="container-fluid">
@@ -315,11 +298,13 @@
     text-decoration: none;
   }
   #content{
-    margin-top: 10px;
+    margin-top: 78px;
+    /*margin-top: 10px;*/
     background: #fff;
-    height: auto;
-    padding-bottom: 50px;
-    overflow: hidden;
+    padding-top: 0;
+    /*height: auto;*/
+    /*padding-bottom: 50px;*/
+    /*overflow: hidden;*/
   }
   /*喜欢*/
   .like-group{
@@ -489,6 +474,9 @@
   .blog-top{
     /*background: red;*/
     display: block;
+  }
+  .blog-title{
+    padding-top: 10px;
   }
 
 </style>

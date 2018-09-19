@@ -2,37 +2,40 @@
   <div>
     <!--导航栏-->
     <v-header></v-header>
-    <!--用户内容区-->
-    <div class="container message-content">
-      <!-- Nav tabs -->
-      <ul class="nav nav-tabs" role="tablist">
-        <li role="presentation" class="active"><a href="#article" aria-controls="message" role="tab" data-toggle="tab">消息</a></li>
-      </ul>
+    <div id="content">
+      <!--用户内容区-->
+      <div class="container message-content">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation" class="active"><a href="#article" aria-controls="message" role="tab" data-toggle="tab">消息</a></li>
+        </ul>
 
-      <!-- Tab panes -->
-      <div class="tab-content">
-        <!--消息列表-->
-        <div role="tabpanel" class="tab-pane active" id="message">
+        <!-- Tab panes -->
+        <div class="tab-content">
+          <!--消息列表-->
+          <div role="tabpanel" class="tab-pane active" id="message">
 
-          <!--消息部分-->
-          <div class="item message-card" v-for="message in messageList" :key="message.id">
-            <!--用户头像-->
-            <a :href="'/user/'+message.id">
-              <img class="img-circle user-img" :src="message.img" alt="">
-            </a>
-            <span>
-                        <a :href="'/user/'+message.id">{{message.name}}</a>
-                        <small>：</small><small text="${message.content}">{{message.content}}</small>
-                </span>
-            <div class="article">
-              <span class="message-time">{{message.createTime | dateFormat}}</span>
-              <a href="javascript:void(0);"  class="article-type delete" id="delete"  @click="deleteMessage(message.username)">删除</a>
-              <a :href="'/chat/' + message.id" class="article-type">查看</a>
+            <!--消息部分-->
+            <div class="item message-card" v-for="message in messageList" :key="message.id">
+              <!--用户头像-->
+              <a :href="'/user/'+message.id">
+                <img class="img-circle user-img" :src="message.img" alt="">
+              </a>
+              <span>
+                          <a :href="'/user/'+message.id">{{message.name}}</a>
+                          <small>：</small><small text="${message.content}">{{message.content}}</small>
+                  </span>
+              <div class="article">
+                <span class="message-time">{{message.createTime | dateFormat}}</span>
+                <a href="javascript:void(0);"  class="article-type delete" id="delete"  @click="deleteMessage(message.username)">删除</a>
+                <a :href="'/chat/' + message.id" class="article-type">查看</a>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
 </template>
@@ -113,7 +116,7 @@
     padding:8px 10px  40px 10px ;
     /*padding-bottom: 10px;*/
     /*padding: 12px;*/
-    margin-top: 12px;
+    /*margin-top: 12px;*/
     background: #fff;
     /*background: red;*/
 

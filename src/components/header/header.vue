@@ -1,87 +1,60 @@
 <template>
   <!--导航条-->
-  <nav class="navbar navbar-default">
-    <div class="container">
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header ">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">博客</a>
-      </div>
+  <b-navbar toggleable="md" class="header" fixed="top">
+    <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
+    <b-navbar-brand href="/" style="color: #0084ff">
+      MeowNest
+    </b-navbar-brand>
+    <b-collapse is-nav id="nav_collapse">
+      <b-navbar-nav>
+        <b-nav-item href="/index?sort=newest" class="nav-item">首页</b-nav-item>
+        <b-nav-item href="/index?sort=popular" class="nav-item">热门</b-nav-item>
+        <b-nav-item href="/follow" class="nav-item">关注</b-nav-item>
+        <b-nav-item href="/message" class="nav-item">
+          消息<b-badge variant="danger" class="message-icon" v-if="unreadMessageCount > 0">{{ unreadMessageCount }}</b-badge>
+        </b-nav-item>
+      </b-navbar-nav>
 
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav ul-left">
-          <li ><a href="/index?sort=newest">首页 <span class="sr-only">(current)</span></a></li>
-          <li><a href="/index?sort=popular" id="hotArticle">热门</a></li>
-          <li><a href="/follow">关注</a></li>
-        </ul>
-        <!--
-        /**
-         * 遇到问题-----JS中设置window.location.href跳转无效
-         * 原因是 a标签的href跳转会执行在window.location.href设置的跳转之前:
-         * 如果是表单form的话  也会先执行form提交。
-         * 提交之后 就已经不在当前页面了。所以 window.location.href无效。
-         *
-         * 加上return false;即可
-         */
-        -->
-        <form class="navbar-form navbar-left" onsubmit="return false;">
-          <!--搜索-->
-          <div class="form-group">
-            <input type="text" class="form-control search" id="search" placeholder="搜索" v-model="keyword" @keyup.enter="search">
-            <!--<button type="button" class="btn glyphicon glyphicon-search search-btn" aria-hidden="true"></button>-->
-          </div>
+      <!-- Right aligned nav items -->
+      <b-navbar-nav class="ml-auto">
 
-        </form>
-        <ul class="nav navbar-nav navbar-right nav-right ">
-          <li><a href="javascript:void(0)" @click="writeBlog">写博客</a></li>
-          <li>
-            <a href="/message">
-              <i class="fa fa-bell"></i>
-              <span class="tip" v-if="unreadMessageCount > 0">{{unreadMessageCount}}</span>
-            </a>
-          </li>
+        <b-nav-form  onsubmit="return false;">
+          <b-form-input size="sm" class="mr-sm-2" type="text" placeholder="" style="width: 304px" v-model="keyword"  @keyup.enter.native="search" />
+          <b-button size="sm" class="my-2 my-sm-0" type="button" style="background: #0084ff;border: 0;padding: 6px 14px" @click="search">搜索</b-button>
+        </b-nav-form>
 
-          <!--已登入-->
-          <li class="dropdown" v-if="hasLogin">
-            <img class="dropdown-toggle img-circle user-img" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="img" :src="user.img" id="img" >
-            <ul class="dropdown-menu">
-              <li><a :href="'/user/' + user.id">我的主页</a></li>
-              <li><a href="/user/settings/profile">设置</a></li>
-              <li role="separator" class="divider"></li>
-              <li>
-                <a href="javascript:void(0)" id="logout" @click="logout">退出</a>
-              </li>
-            </ul>
-          </li>
-          <!--未登入-->
-          <li v-else>
-            <a href="/login" id="login">登入</a>
-          </li>
-        </ul>
-      </div><!-- /.navbar-collapse -->
-    </div><!-- /.container-fluid -->
-  </nav>
+        <b-navbar-nav right>
+          <!--<b-button variant="success" size="sm">写博客</b-button>-->
+          <b-nav-item href="javascript:void(0)" @click="writeBlog" style="padding: 0 15px;line-height: 60px">写博客</b-nav-item>
+        </b-navbar-nav>
+
+        <b-nav-item-dropdown right  v-if="hasLogin">
+          <!-- Using button-content slot -->
+          <template slot="button-content">
+            <!--<em>User</em>-->
+            <b-img rounded="circle" width="48" height="48" :src="user.img" alt="img" class="img"/>
+          </template>
+          <b-dropdown-item :href="'/user/' + user.id">我的主页</b-dropdown-item>
+          <b-dropdown-item href="/user/settings/profile">个人设置</b-dropdown-item>
+          <b-dropdown-item href="javascript:void(0)" @click="logout">退出</b-dropdown-item>
+        </b-nav-item-dropdown>
+
+        <b-navbar-nav right v-else>
+          <!--<b-button variant="success" size="sm">写博客</b-button>-->
+          <b-nav-item href="/login" style="line-height: 60px;padding: 0 15px">登入</b-nav-item>
+        </b-navbar-nav>
+      </b-navbar-nav>
+
+    </b-collapse>
+  </b-navbar>
+
+  <!-- navbar-1.vue -->
 </template>
 
 <script>
-  import header from '@/components/header/header'
-  // import '../../../static/bootstrap/css/bootstrap.css'
-  // import '../../../static/bootstrap/css/bootstrap-theme.css'
-  // import '../../../static/css/dropload.css'
-  // import '../../../static/font-awesome-4.7.0/css/font-awesome.css'
-  // import '../../../static/css/main.css'
-  // import '../../../static/css/index.css'
   export default {
     name: 'header',
     components: {
-      // 2.注册header
-      'v-header': header
     },
     props: ['kw'],
     data () {
@@ -147,6 +120,7 @@
       // 搜索
       search: function () {
         if (this.keyword != null && this.keyword.trim().length > 0) {
+            // alert(this.keyword)
           window.location.href = '/search?kw=' + this.keyword
         }
       },
@@ -161,3 +135,31 @@
     }
   }
 </script>
+
+<style scoped>
+  .header{
+    height: 60px;
+    padding: 0 16px;
+    /*background: #ccc;*/
+    background: #fff;
+    /*opacity: 0;*/
+    box-shadow: 0 1px 3px rgba(26,26,26,.1);
+    /*margin-bottom: 500px;*/
+    color: #444;
+    min-width: 1000px;
+    /*overflow: hidden;*/
+  }
+  .img{
+    padding: 0;
+  }
+  .nav-item{
+    padding: 8px;
+    color: #444;
+  }
+  .message-icon{
+    position: relative;
+    top: -6px;
+    border-radius: 50px;
+    /*margin-top: 5px;*/
+  }
+</style>

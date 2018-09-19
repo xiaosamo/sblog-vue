@@ -5,11 +5,17 @@ import App from './App'
 import router from './router'
 import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
+// bootstrap4
+import BootstrapVue from 'bootstrap-vue'
 import toastr from 'toastr'
 // import 'element-ui/lib/theme-chalk/index.css'
 // 引入公共样式
-import '@/styles/bootstrap/css/bootstrap.css'
-import '@/styles/bootstrap/css/bootstrap-theme.css'
+// import '@/styles/bootstrap/css/bootstrap.css'
+import '@/styles/css/AdminLTE.css'
+
+import '@/styles/bootstrap/css/bootstrap4.css'
+// import '@/styles/bootstrap/css/bootstrap-theme.css'
+
 import '@/styles/css/dropload.css'
 import '@/styles/font-awesome-4.7.0/css/font-awesome.css'
 import '@/styles/css/main.css'
@@ -34,6 +40,7 @@ import '../static/simditor/scripts/uploader'
 import '../static/simditor/scripts/simditor'
 import '../static/js/progressbar'
 
+
 /* eslint-disable */
 import $ from 'jquery'
 
@@ -43,6 +50,7 @@ Vue.use(VueResource)
 // Vue.use(toastr)
 // Vue.use(ElementUI) // 使用vue-element-admin
 Vue.use(toastr)
+Vue.use(BootstrapVue)
 // Vue.use(Simditor)
 Vue.config.productionTip = false
 

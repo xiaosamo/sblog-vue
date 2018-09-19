@@ -1,50 +1,19 @@
-<!--<link rel="stylesheet" href="components/login/login.css">-->
 <template>
-  <div id="app">
-    <div class="auth-layout">
+  <form class="form-signin" onsubmit="return false;">
+    <img class="mb-4" src="https://getbootstrap.com/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+    <h1 class="h3 mb-3 font-weight-normal title">欢 迎</h1>
+    <label for="username" class="sr-only">username</label>
+    <input type="text" id="username" class="form-control" placeholder="用户名" required autofocus v-model="username" @blur="checkUsername">
 
-      <div class="nav d-lg-none">
-        <!--<a href="http://vuestic.epicmax.co/#/" class="i-vuestic router-link-active">博客</a>-->
-        <a href="#" class="router-link-active">
-          送你小心心‍‍‍❤️‍‍‍‍‍❤️‍‍‍‍‍❤️‍‍‍‍‍❤️‍‍
-        </a>
-      </div>
+    <label for="name" class="sr-only">name</label>
+    <input type="text" id="name" class="form-control" placeholder="名称" required autofocus v-model="name">
 
-      <div class="main row">
-        <div class="auth-content col-lg-12 col-12">
-          <!--<div class="login "><h2 class="animated infinite bounce">欢迎</h2>-->
-          <div class="login"><h2 class="animated  rubberBand">欢迎加入博客</h2>
-            <form onsubmit="return false;">
-              <div class="form-group">
-                <div class="input-group"><input type="text" id="username" required="required" v-model="username" @blur="checkUsername">
-                  <label for="username" class="control-label">用户名</label><i class="bar"></i>
-                </div>
-
-              </div>
-
-              <div class="form-group">
-                <div class="input-group"><input type="password" id="password" required="required" v-model="password"> <label
-                  for="password" class="control-label">密码</label><i class="bar"></i>
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="input-group"><input type="text" id="name" required="required" v-model="name"> <label
-                  for="name" class="control-label">名称</label><i class="bar"></i>
-                </div>
-              </div>
-
-              <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between down-container">
-                <button id="submit" type="button" class="btn btn-primary" @click="submit">
-                  注册
-                </button>
-                <a href="/login" class="link">去登入</a></div>
-            </form>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" class="form-control" placeholder="密码" required v-model="password">
+    <button class="btn btn-lg btn-primary btn-block" style="margin-top: 28px;" type="button" @click="submit">注册     </button>
+    <a href="/login" class="float-right" style="margin-top: 12px">去登入</a>
+    <p class="mt-5 mb-3" style="color: #ccc">&copy; 2017-2018</p>
+  </form>
 </template>
 
 <script>
@@ -135,36 +104,68 @@
 </script>
 
 <style scoped>
-  .login {
-    width: 21.375rem
+  html,
+  body {
+    height: 100%;
   }
 
-  @media (max-width: 991.98px) {
-    .login {
-      width: 100%;
-      padding-right: 2rem;
-      padding-left: 2rem
-    }
-
-    .login .down-container .link {
-      margin-top: 2rem
-    }
+  body {
+    display: -ms-flexbox;
+    display: -webkit-box;
+    display: flex;
+    -ms-flex-align: center;
+    -ms-flex-pack: center;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    /*background-color: #f5f5f5;*/
+    background-color: #f1f1f1;
+    /*background-image: url("http://www.znsfagri.com/uploadfile/editor/image/20170626/20170626151136_11631.jpg");*/
+    /*background-image: url("http://img.mp.itc.cn/upload/20170324/663c85eae74f4320a3e382f03af76d52_th.jpg");*/
+    background-image: url("http://4493bz.1985t.com/uploads/allimg/141124/4-141124100202.jpg");
+    background-repeat:no-repeat ;
+    background-size:100% 100%;
+    background-attachment: fixed;
   }
 
-  .login h2 {
-    text-align: center
-  }
-
-  .login .down-container {
-    margin-top: 3.125rem
-  }
-
-  .main{
+  .form-signin {
+    color: #fff;
     width: 100%;
-    margin: 0 auto;
-    background: red;
+    max-width: 380px;
+    padding: 40px 45px;
+    margin: 110px auto;
+    margin-bottom: 0;
+    text-align: center;
+    background: #fff;
   }
-  .CHAT{
-    display: none;
+  .form-signin .checkbox {
+    font-weight: 400;
+  }
+  .form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+  }
+  .form-signin .form-control:focus {
+    z-index: 2;
+  }
+  .form-signin input[type="email"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }
+
+  .title{
+    color: #444;
   }
 </style>

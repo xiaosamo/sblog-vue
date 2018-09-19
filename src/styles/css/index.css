@@ -1,8 +1,20 @@
+/*去掉button按钮点击之后会有边框*/
+.btn:focus,.btn:active:focus,.btn.active:focus,.btn.focus,.btn:active.focus,.btn.active.focus {
+  outline: none;
+  /*border-color: transparent;*/
+  box-shadow:none;
+  /*background:#77bc1f;*/
+  /*color:#fff;*/
+}
+body{
+
+}
 .left-text{
   background: #f6f6f6;
-
+  /*width: 740px;*/
   height: auto;
-  margin: 0 auto;
+  margin: 0;
+  /*margin: 0 auto;*/
   padding: 0;
   /*margin-right: 20px;*/
 }
@@ -15,14 +27,6 @@
 }
 
 
-#content{
-  margin-top: 12px;
-  /*background: #000;*/
-  background: #f6f6f6;
-
-  /*margin: 0 auto;*/
-  /*padding: 0;*/
-}
 .blog-content{
   width: 100%;
   /*background: blue;*/
@@ -89,8 +93,12 @@
 
 
 #content{
+  padding-top: 76px;
   /*background: #000;*/
   background: #f6f6f6;
+  min-width: 1000px;
+  /*margin-top: 12px;*/
+  /*background: #000;*/
 
 }
 

@@ -2,67 +2,70 @@
   <div>
     <!--导航栏-->
     <v-header ref="header"></v-header>
-    <!--编辑区-->
-    <div class="container edit">
-      <h2>个人资料</h2>
-      <form class="form-horizontal" onsubmit="return false;">
+    <div id="content">
+      <!--编辑区-->
+      <div class="container edit">
+        <h2>个人资料</h2>
+        <form class="form-horizontal" onsubmit="return false;">
 
-        <!--头像-->
-        <div class="form-group">
-          <label class="col-sm-2 control-label">头像</label>
-          <div class="col-sm-10 img">
-            <img class="img-rounded" :src="user.img" alt="">
-            <input type="file"  id="file" ref="file" @change="upload($event)">
+          <!--头像-->
+          <div class="form-group">
+            <label class="col-sm-2 control-label">头像</label>
+            <div class="col-sm-10 img">
+              <img class="img-rounded" :src="user.img" alt="">
+              <input type="file"  id="file" ref="file" @change="upload($event)">
 
-            <a href="javascript:void(0)"  id="edit-img"  @click="changeUserImg">编辑</a>
+              <!--<a href="javascript:void(0)"  id="edit-img" >编辑</a>-->
+              <b-button variant="outline-primary"  @click="changeUserImg" style="margin-left: 25px">编辑</b-button>
+            </div>
           </div>
-        </div>
-        <hr>
-        <div class="form-group">
-          <label for="inputName" class="col-sm-2 control-label" >名称</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control edit-form" id="inputName" v-model="name">
-            <!--<input type="text" class="form-control edit-form" id="username" placeholder="" value="${blogger.bloggerUsername}" hidden>-->
+          <hr>
+          <div class="form-group">
+            <label for="inputName" class="col-sm-2 control-label" >名称</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control edit-form" id="inputName" v-model="name">
+              <!--<input type="text" class="form-control edit-form" id="username" placeholder="" value="${blogger.bloggerUsername}" hidden>-->
+            </div>
           </div>
-        </div>
-        <hr>
-        <div class="form-group">
-          <label for="inputSign" class="col-sm-2 control-label">一句话介绍自己</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputSign" placeholder="说点什么吧..." v-model="sign">
+          <hr>
+          <div class="form-group">
+            <label for="inputSign" class="col-sm-2 control-label">签名</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputSign" placeholder="说点什么吧..." v-model="sign">
+            </div>
           </div>
-        </div>
-        <hr>
-        <div class="form-group">
-          <label for="inputInfo" class="col-sm-2 control-label">个人介绍</label>
-          <div class="col-sm-10">
-            <!--<input type="text" class="form-control" id="inputInfo" placeholder="" value>-->
-            <textarea class="form-control" id="inputInfo" placeholder="" v-model="info"></textarea>
+          <hr>
+          <div class="form-group">
+            <label for="inputInfo" class="col-sm-2 control-label">个人介绍</label>
+            <div class="col-sm-10">
+              <!--<input type="text" class="form-control" id="inputInfo" placeholder="" value>-->
+              <textarea class="form-control" id="inputInfo" placeholder="" v-model="info"></textarea>
+            </div>
           </div>
-        </div>
-        <hr>
-        <div class="form-group">
-          <label for="inputPhone" class="col-sm-2 control-label">手机号</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputPhone" placeholder="" v-model="phone">
+          <hr>
+          <div class="form-group">
+            <label for="inputPhone" class="col-sm-2 control-label">手机号</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="inputPhone" placeholder="" v-model="phone">
+            </div>
           </div>
-        </div>
-        <hr>
-        <div class="form-group">
-          <label for="email" class="col-sm-2 control-label">邮箱</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="email" placeholder="" v-model="email">
+          <hr>
+          <div class="form-group">
+            <label for="email" class="col-sm-2 control-label">邮箱</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="email" placeholder="" v-model="email">
+            </div>
           </div>
-        </div>
-        <hr>
+          <hr>
 
-        <div class="form-group">
-          <div class="col-sm-offset-2 col-sm-10">
-            <button id="submit" class="btn btn-primary" @click="updateInfo">修改</button>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button id="submit" class="btn btn-primary" @click="updateInfo">修改</button>
+            </div>
           </div>
-        </div>
-      </form>
+        </form>
 
+      </div>
     </div>
   </div>
 </template>
@@ -179,15 +182,17 @@
 
 <style scoped>
   .edit{
-    margin-top: 12px;
+    /*margin-top: 12px;*/
     background: #fff;
     height: auto;
     padding-bottom: 12px;
   }
   .edit h2{
+    padding-top: 10px;
+    /*padding-left: 5px;*/
     /*background: #000;*/
-    margin-left: 25px;
-    margin-top: 28px;
+    /*margin-left: 25px;*/
+    /*margin-top: 28px;*/
   }
 
   .edit .form-group{
@@ -230,8 +235,9 @@
 
   .edit  hr {
 
-    margin: 0 auto;
+    /*margin: 0 auto;*/
     width: 85%;
+    margin-left: 20px ;
     /*margin-top: 10px;*/
   }
 
