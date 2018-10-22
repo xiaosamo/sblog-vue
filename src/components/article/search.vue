@@ -48,7 +48,7 @@
                       <small class="article-type">{{article.categoryName}}</small>
                       <div class="article-content lead">
                         <a :href="'/article/'+article.articleId">
-                          {{article.content}}
+                          {{article.summary}}
                         </a>
                       </div>
                       <div class="container">

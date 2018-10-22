@@ -15,6 +15,14 @@ export default new Router({
       // component: index
     },
     {
+      // 根目录
+      path: '/test',
+      // redirect: '/index'
+      name: 'test',
+      component: () => import('@/components/test')
+      // component: index
+    },
+    {
       // 登入
       path: '/login',
       name: 'login',

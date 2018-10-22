@@ -148,10 +148,10 @@ Uploader = (function(superClass) {
       processData: false,
       contentType: false,
       type: 'POST',
-        //这里修改了。。。
-        beforeSend: function(request) {
-            request.setRequestHeader(csrfHeader, csrfToken); // 添加  CSRF Token
-        },
+        // 这里修改了。。。
+        // beforeSend: function(request) {
+        //     request.setRequestHeader(csrfHeader, csrfToken); // 添加  CSRF Token
+        // },
       xhr: function() {
         var req;
         req = $.ajaxSettings.xhr();
@@ -226,6 +226,7 @@ Uploader = (function(superClass) {
     if (window.FileReader && FileReader.prototype.readAsDataURL && /^image/.test(fileObj.type)) {
       fileReader = new FileReader();
       fileReader.onload = function(e) {
+        console.log("imgSrc  = " + img.src);
         return img.src = e.target.result;
       };
       return fileReader.readAsDataURL(fileObj);

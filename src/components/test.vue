@@ -99,7 +99,15 @@
               >
                 {{category.name}}
               </a>
+              <!--</div>-->
 
+              <!--<a href="/article/search?category=后端" class="category list-group-item">后端</a>-->
+              <!--<a href="/article/search?category=Android" class="category list-group-item">Android</a>-->
+              <!--<a href="/article/search?category=ios" class="category list-group-item">ios</a>-->
+              <!--<a href="/article/search?category=设计" class="category list-group-item">设计</a>-->
+              <!--<a href="/article/search?category=工具资源" class="category list-group-item">工具资源</a>-->
+              <!--<a href="/article/search?category=未分类" class="category list-group-item">未分类</a>-->
+              <!--<a href="/article/search?category=其它" class="category list-group-item">其它</a>-->
             </div>
 
           </div>
@@ -145,8 +153,6 @@
     },
     data () {
       return {
-        articleTotal: '', // 所有文章数量
-        pageNum: 1,
         articleList: [],
         popularUserList: [],
         categoryList: [], // 分类列表
@@ -165,24 +171,19 @@
     },
     created () {
       // window.onscroll = function(){
-      //   // 变量scrollTop是滚动条滚动时，距离顶部的距离
+      //   //变量scrollTop是滚动条滚动时，距离顶部的距离
       //   var scrollTop = document.documentElement.scrollTop||document.body.scrollTop;
-      //   // 变量windowHeight是可视区的高度
+      //   //变量windowHeight是可视区的高度
       //   var windowHeight = document.documentElement.clientHeight || document.body.clientHeight;
-      //   // 变量scrollHeight是滚动条的总高度
+      //   //变量scrollHeight是滚动条的总高度
       //   var scrollHeight = document.documentElement.scrollHeight||document.body.scrollHeight;
-      //   console.log("scrollTop + windowHeight = "+ (scrollTop + windowHeight) + " , scrollHeight = " + scrollHeight);
-      //
-      //   // 滚动条到底部的条件
-      //   if (scrollTop + windowHeight >= scrollHeight){
-      //     alert("到底部...");
-      //     alert("article = " + this.articleList)
-      //     // this.articleList.push(this.articleList[0])
-      //     // console.log('到底部...')
-      //     // console.log(this.sort)
+      //   //滚动条到底部的条件
+      //   if(scrollTop+windowHeight >= scrollHeight){
+      //     console.log('到底部...')
+      //     console.log(this.sort)
       //     // alert('底部')
-      //     // 写后台加载数据的函数
-      //     // console.log("距顶部"+scrollTop+"可视区高度"+windowHeight+"滚动条总高度"+scrollHeight);
+      //     //写后台加载数据的函数
+      //     console.log("距顶部"+scrollTop+"可视区高度"+windowHeight+"滚动条总高度"+scrollHeight);
       //   }
       // }
     },
@@ -205,40 +206,23 @@
     },
     methods: {
       handleScroll: function () {
-        // 变量scrollTop是滚动条滚动时，距离顶部的距离
         var scrollTop = document.documentElement.scrollTop || document.body.scrollTop
         // 变量windowHeight是可视区的高度
         var windowHeight = document.documentElement.clientHeight || document.body.clientHeight
         // 变量scrollHeight是滚动条的总高度
         var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight
-        // console.log("scrollTop + windowHeight = "+ (scrollTop + windowHeight) + " , scrollHeight = " + scrollHeight);
-        // if (scrollTop === 0 ) {
-        //   alert('scrollTop');
-        // }
-        // if (windowHeight === 0 ) {
-        //   alert('windowHeight');
-        // }
-        // if (scrollHeight === 0 ) {
-        //   alert('scrollHeight');
-        // }
         // 滚动条到底部的条件
-        if (Math.ceil(scrollTop + windowHeight) >= scrollHeight && scrollTop !== 0) {
-          // TODO
-          // this.pageNum = Math.ceil(this.articleList.length / 10 + 1)
-          if (this.articleList.length < this.articleTotal) {
-            this.pageNum = this.pageNum + 1
-            // alert("加载第" + this.pageNum + "页")
-            this.getMoreArticle(this.pageNum)
-          }
+        if (scrollTop + windowHeight >= scrollHeight) {
+          // if (document.body.scrollTop + window.innerHeight >= document.body.offsetHeight) {
+          //     console.log('距顶部'+scrollTop+"可视区高度"+windowHeight+"滚动条总高度"+scrollHeight);
 
-          // alert(this.articleList.length)
-          // alert("到底部...");
-          // alert("article = " + this.articleList[1].title);
-          // this.articleList.push(this.articleList[1]);
-          // console.log('到底部...')
-          // console.log(this.sort)
-          // alert('底部')
-          // 写后台加载数据的函数
+          console.log('到底部...')
+          alert('到底部...')
+          // console.log(this.articleList)
+
+          // this.articleList.push({'articleId':111,'articleImg': '','categoryName':'设计', 'title': '新家的','content': '哈哈'})
+          // // alert('底部')
+          // //写后台加载数据的函数
           // console.log("距顶部"+scrollTop+"可视区高度"+windowHeight+"滚动条总高度"+scrollHeight);
         }
       },
@@ -282,28 +266,8 @@
         this.$http.get(`${process.env.API_ROOT}/article/list.do?sort=` + this.sort).then(response => {
           console.log(response.data.data.list)
           this.articleList = response.data.data.list
-          this.articleTotal = response.data.data.total
         }, response => {
           console.log('error')
-        })
-      },
-      // 下拉加载更多文章
-      getMoreArticle: function (pageNum) {
-        this.$http.get(`${process.env.API_ROOT}/article/list.do?sort=` + this.sort + `&pageNum=` + pageNum).then(response => {
-          if (response.data.status === 0) {
-            // alert("length =" + response.data.data.list.length)
-            // this.articleList = this.articleList +    response.data.data.list
-            for (var i = 0; i < response.data.data.list.length; i++) {
-              this.articleList.push(response.data.data.list[i])
-            }
-            // this.articleList.push(response.data.data.list)
-            // console.log("下拉加载更多的数据:")
-            // console.log(response.data.data.list)
-            // console.log("list现在的数据 ：")
-            // console.log(this.articleList)
-          }
-        }, response => {
-          console.log('加载更多文章失败')
         })
       },
       // 当点击搜索时触发

@@ -7,6 +7,8 @@ import VueRouter from 'vue-router'
 import VueResource from 'vue-resource'
 // bootstrap4
 import BootstrapVue from 'bootstrap-vue'
+// import BScroll from 'better-scroll'
+
 import toastr from 'toastr'
 // import 'element-ui/lib/theme-chalk/index.css'
 // 引入公共样式
@@ -40,6 +42,8 @@ import '../static/simditor/scripts/uploader'
 import '../static/simditor/scripts/simditor'
 import '../static/js/progressbar'
 
+import '../static/js/dropload'
+
 
 /* eslint-disable */
 import $ from 'jquery'
@@ -51,7 +55,7 @@ Vue.use(VueResource)
 // Vue.use(ElementUI) // 使用vue-element-admin
 Vue.use(toastr)
 Vue.use(BootstrapVue)
-// Vue.use(Simditor)
+// Vue.use(BScroll)
 Vue.config.productionTip = false
 
 // 路由跳转
@@ -67,8 +71,6 @@ Vue.http.interceptors.push((request, next) => {
   request.credentials = true
   next()
 });
-
-
 
 
 /* eslint-disable no-new */
