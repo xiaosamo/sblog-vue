@@ -14,6 +14,7 @@ import toastr from 'toastr'
 // 引入公共样式
 // import '@/styles/bootstrap/css/bootstrap.css'
 import '@/styles/css/AdminLTE.css'
+import Vuex from 'vuex'
 
 import '@/styles/bootstrap/css/bootstrap4.css'
 // import '@/styles/bootstrap/css/bootstrap-theme.css'
@@ -44,6 +45,8 @@ import '../static/js/progressbar'
 
 import '../static/js/dropload'
 
+import VueCookies from 'vue-cookies'
+
 
 /* eslint-disable */
 import $ from 'jquery'
@@ -55,6 +58,9 @@ Vue.use(VueResource)
 // Vue.use(ElementUI) // 使用vue-element-admin
 Vue.use(toastr)
 Vue.use(BootstrapVue)
+Vue.use(VueCookies) // cookies
+Vue.use(Vuex)
+
 // Vue.use(BScroll)
 Vue.config.productionTip = false
 
@@ -64,13 +70,22 @@ Vue.prototype.$goRoute = function (index) {
 }
 
 
+
 // Vue.http.options.emulateJSON = false;
 // Vue.http.options.emulateJSON = true;
 Vue.http.options.xhr = { withCredentials: true };
 Vue.http.interceptors.push((request, next) => {
+  // 判断token是否存在，如果存在将每个页面header都添加token
+  // if (window.localStorage.getItem('token')){
+  //   Vue.http.headers.common['Authentication-Token'] =  window.localStorage.getItem('token')
+  //   console.log('请求后台。。。')
+  //   console.log(window.localStorage.getItem('token'))
+  // }
+  // 携带上cookie，解决跨域问题
   request.credentials = true
   next()
 });
+
 
 
 /* eslint-disable no-new */

@@ -37,8 +37,8 @@ export default new Router({
     },
     {
       // 写博客
-      path: '/blog/edit/new',
-      name: 'newBlog',
+      path: '/write',
+      name: 'write',
       component: () => import('@/components/blog/write')
     },
     {
@@ -67,9 +67,9 @@ export default new Router({
       component: () => import('@/components/index')
     },
     {
-      // 关注
-      path: '/follow',
-      name: 'follow',
+      // 订阅的文章
+      path: '/subscribe',
+      name: 'subscribe',
       component: () => import('@/components/index')
       // alias: '/' // 别名意味着，当用户访问 /index 时，URL 会保持为 /，但是路由匹配则为 /index，就像用户访问 / 一样。
     },
@@ -88,7 +88,7 @@ export default new Router({
     },
     {
       // 用户设置
-      path: '/user/settings/profile',
+      path: '/user/settings',
       name: 'userSetting',
       component: () => import('@/components/user/userSetting')
     },

@@ -37,7 +37,7 @@
         <label>博客分类:</label>
         <select name="type" id="type" v-model="categoryId" @change="getCategoryId">
           <!--分类-->
-          <option v-for="category in categoryList"
+          <option v-for="category in categories"
                   :key="category.id"
                   :value="category.id"
           >
@@ -58,6 +58,7 @@
 
   // 引入自己的js方法
   import {matchType} from '@/utils/util'
+  import * as toastr from '@/styles/toastr/toastr.min'
 
   export default {
     name: 'write',
@@ -74,13 +75,13 @@
           opacity: 0.3,
           display: 'block'
         },
-        categoryList: [], // 分类列表
+        categories: [], // 分类列表
         categoryId: '' // 选中的分类id
       }
     },
     mounted () {
       this.createEditor()
-      this.getCategory()
+      this.getCategories()
     },
     methods: {
       valueChange (e, val) {
@@ -113,11 +114,15 @@
         })
       },
       addArticle: function () {
-        this.$http.post(`${process.env.API_ROOT}/article/add.do`, {
+        if (!this.valid()) {
+          return
+        }
+        this.$http.post(`${process.env.API_ROOT}/article/add`, {
           // this.$http.jsonp(`${process.env.API_ROOT}/user/login.do`, {
           'title': this.title,
-          'content': $('.simditor-body').text(), // text内容
-          'htmlContent': this.editor.getValue(),
+          // 'content': $('.simditor-body').text(), // text内容
+          // 'htmlContent': this.editor.getValue(),
+          'content': this.editor.getValue(), // html内容
           'categoryId': this.categoryId,
           'img': this.articleImg,
           'isVedio': this.isVedio
@@ -129,6 +134,21 @@
         }, response => {
           console.log('error')
         })
+      },
+      valid: function () {
+        if (this.title == null || this.title.length === 0) {
+          toastr.warning('标题不能未空')
+          return false
+        }
+        if (this.editor.getValue() == null || this.editor.getValue().length === 0) {
+          toastr.warning('内容不能未空')
+          return false
+        }
+        if (this.categoryId == null || this.categoryId.length === 0) {
+          toastr.warning('分类不能未空')
+          return false
+        }
+        return true
       },
       // 上传文章图片
       upload: function (event) {
@@ -164,15 +184,13 @@
         this.$refs.file.click()
       },
       // 获取分类
-      getCategory: function () {
+      getCategories: function () {
         // 请求登入
-        this.$http.get(`${process.env.API_ROOT}/category/list.do`).then(response => {
-          console.log('分类：')
-          console.log(response.data)
+        this.$http.get(`${process.env.API_ROOT}/categories`).then(response => {
           if (response.data.status === 0) {
-            this.categoryList = response.data.data
+            this.categories = response.data.data
             // 默认选中
-            this.categoryId = this.categoryList[0].id
+            // this.categoryId = this.categories[0].id
           }
         }, response => {
           console.log('error')

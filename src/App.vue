@@ -47,17 +47,17 @@
     },
     mounted: function () {
       // console.log('username=' + this.username + ',password=' + this.password)
-      // 请求登入
-      this.$http.get(`${process.env.API_ROOT}/article/list.do?sort=newest`).then(response => {
-        console.log(response.data.data.list)
-        this.articleList = response.data.data.list
-        // get body data
-        // this.someData = response.body;
-      }, response => {
-        console.log('error')
-      })
+      // // 请求登入
+      // this.$http.get(`${process.env.API_ROOT}/article/list.do?sort=newest`).then(response => {
+      //   console.log(response.data.data.list)
+      //   this.articleList = response.data.data.list
+      //   // get body data
+      //   // this.someData = response.body;
+      // }, response => {
+      //   console.log('error')
+      // })
       // 热门用户
-      this.getPopularUser()
+      // this.getPopularUser()
     },
     methods: {
       getPopularUser: function () {

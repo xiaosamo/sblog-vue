@@ -44,9 +44,7 @@
         if (this.username.trim().length === 0) {
           return
         }
-        this.$http.post(`${process.env.API_ROOT}/user/check_valid.do`, {
-          'str': this.username,
-          'type': 'username'
+        this.$http.get(`${process.env.API_ROOT}/valid_username/` + this.username, {
         }, {emulateJSON: true}).then(response => {
           if (response.data.status === 0) {
             // 验证成功
@@ -66,7 +64,7 @@
         }
         // console.log('username=' + this.username + ',password=' + this.password)
         // 请求登入
-        this.$http.post(`${process.env.API_ROOT}/user/register.do`, {
+        this.$http.post(`${process.env.API_ROOT}/register`, {
           // this.$http.jsonp(`${process.env.API_ROOT}/user/login.do`, {
           'username': this.username,
           'password': this.password,
@@ -74,6 +72,8 @@
         }, {emulateJSON: true}).then(response => {
           if (response.data.status === 0) {
             toastr.success(response.data.msg)
+            // 未登录
+            this.$router.push({path: '/login'})
           } else {
             toastr.error(response.data.msg)
           }

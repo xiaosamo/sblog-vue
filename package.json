@@ -1,5 +1,5 @@
 {
-  "name": "schoolblog",
+  "name": "sblog-vue",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "yuan <yuan491187718@gmail.com>",
@@ -91,7 +91,9 @@
     "webpack": "^3.6.0",
     "webpack-bundle-analyzer": "^2.9.0",
     "webpack-dev-server": "^2.9.1",
-    "webpack-merge": "^4.1.0"
+    "webpack-merge": "^4.1.0",
+    "vue-cookies": "^1.5.12",
+    "vuex":"^3.0.1"
   },
   "engines": {
     "node": ">= 6.0.0",

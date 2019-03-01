@@ -15,47 +15,49 @@
                   <!--文章头部图片或视频-->
                   <div>
                     <!--如果是视频-->
-                    <div v-if="article.isVedio">
-                      <video class="img-thumbnail img-responsive center-block article-img" :src="article.articleImg"
-                             controls="controls">
-                      </video>
-                    </div>
+                    <!--<div v-if="article.isVedio">-->
+                      <!--<video class="img-thumbnail img-responsive center-block article-img" :src="article.articleImg"-->
+                             <!--controls="controls">-->
+                      <!--</video>-->
+                    <!--</div>-->
 
                     <!--否则是图片-->
-                    <div v-else>
-                      <a :href="'/article/'+article.articleId">
+                    <div>
+                      <a :href="'/article/'+article.id">
                         <img class="img-thumbnail img-responsive center-block article-img" :src="article.articleImg" alt="">
                       </a>
                     </div>
                   </div>
                   <!--<a href="@{'/article/'+${article.articleId}}">-->
                   <!--<a >-->
-                  <!--<img class="img-thumbnail img-responsive center-block article-img" src="http://blog.zhangruipeng.me/hexo-theme-icarus/gallery/shoes.jpg" alt="">-->
+                  <!--<img class="img-thumbnail img-responsive center-block article-img" src="http://blog.zhangruipeng.me/hexo-theme-icarus/gallery/shoes.jpg"alt="">-->
                   <!--文章内容部分-->
                   <div class="item article-card">
                     <!--用户头像-->
-                    <a :href="'/user/'+article.userId">
-                      <img class="img-circle article-user-img" v-bind:src="article.userImg" alt="">
+                    <a :href="'/user/'+article.user.id">
+                      <img class="img-circle article-user-img" v-bind:src="article.user.avatar" alt="">
                     </a>
                     <span>
-        <a :href="'/user/'+article.userId">{{article.userName}}</a>
-      <small>{{article.sign}}</small>
-      </span>
+                        <a :href="'/user/'+article.user.id">{{article.user.name}}</a>
+                        <!--<small>{{article.sign}}</small>-->
+                    </span>
                     <div class="article">
                       <h3>
-                        <a :href="'/article/'+article.articleId">{{article.title}}</a>
+                        <a :href="'/article/'+article.id">{{article.title}}</a>
                       </h3>
-                      <small class="article-type">{{article.categoryName}}</small>
+                      <small class="article-type">{{article.category.name}}</small>
                       <div class="article-content lead">
-                        <a :href="'/article/'+article.articleId">
-                          {{article.summary}}
+                        <a :href="'/article/'+article.id" >
+                          <div v-html="article.content.substring(0,280)">
+                          </div>
+                          <!--{{article.content}}-->
                         </a>
                       </div>
                       <div class="container">
                         <!--<span class="date">2014-14-14</span>-->
-                        <i class="fa  fa-eye">{{article.showCount}}</i>
+                        <i class="fa  fa-eye">{{article.viewCount}}</i>
                         <i class="fa  fa-comment-o">{{article.commentCount}}</i>
-                        <i class="fa  fa-star">{{article.loveCount}}</i>
+                        <i class="fa  fa-star">{{article.likedCount}}</i>
                         <!--<i class="fa  fa-calendar">{{article.createTime}}</i>-->
                         <i class="fa  fa-calendar">{{article.createTime | dateFormat}}</i>
                         <!--calendar-->
@@ -92,9 +94,9 @@
           <div class="container-fluid article-category">
             <span>文章分类</span>
             <div class="list-group" >
-              <!--<div v-for="category in categoryList" :key="category.id">-->
+              <!--<div v-for="category in categories" :key="category.id">-->
               <a href="javascript:void(0);" class="category list-group-item"
-                 v-for="category in categoryList" :key="category.id"
+                 v-for="category in categories" :key="category.id"
                  @click="getCategoryArticle(category.name)"
               >
                 {{category.name}}
@@ -127,8 +129,11 @@
 
 <script >
   import header from '@/components/header/header'
+  import * as toastr from '@/styles/toastr/toastr.min'
   // import * as time from '../utils/time'
   import {formatTime} from '@/utils/time'
+  import store from '../store/user'
+
   // import BScroll from 'better-scroll'
   // import '@/styles/js/dropload'
   export default {
@@ -149,7 +154,7 @@
         pageNum: 1,
         articleList: [],
         popularUserList: [],
-        categoryList: [], // 分类列表
+        categories: [], // 分类列表
         links: [
           {
             text: '登入',
@@ -192,15 +197,18 @@
       // 获取文章
       this.init()
       // 热门用户
-      this.getPopularUser()
+      // this.getPopularUser()
 
-      this.getCategory()
+      // 获取分类
+      this.getCategories()
 
       this.handleScroll()
     },
     watch: {
-      '$route.query.a': function () {
-        // pass
+      $route (to, from) {
+        // 当url改变时，根据不同url做出决定
+        // alert('to=' + to.path + ', from=' + from.path)
+        this.init()
       }
     },
     methods: {
@@ -243,6 +251,8 @@
         }
       },
       getPopularUser: function () {
+        console.log('store=')
+        console.log(store.getters.id)
         this.$http.get(`${process.env.API_ROOT}/user/get_popular_user.do`).then(response => {
           console.log(response.data.data)
           this.popularUserList = response.data.data.list
@@ -254,11 +264,16 @@
       },
       // 初始化文章
       init: function () {
-        console.log('path = ' + this.$route.path)
-        if (this.$route.path === '/follow') {
-          // 获取关注的文章
+        // alert('path' + this.$route.path + '，  sort=' + this.$route.query.sort)
+        // console.log('path = ' + this.$route.path)
+        // console.log('rememberMe')
+        // console.log(this.$cookies.get('rememberMe'))
+        if (this.$route.path === '/subscribe') {
+          // 获取用户关注订阅的文章
           this.followArticle()
-          console.log('/follow')
+        } else if (this.$route.path === '/' || this.$route.path === '/index') {
+          // /index
+          this.getIndexArticle()
         } else if (/category/g.test(this.$route.path)) {
           // /.../.test() 正则表达式g 执行全局匹配
           console.log('/category')
@@ -269,20 +284,30 @@
           // 查找分类文章
           this.getCategoryArticle(this.$route.path.split('/')[2])
         } else {
-          this.getIndexArticle()
-          console.log('/index')
+
         }
       },
       getIndexArticle: function () {
-        if (this.$route.query.sort === 'popular' || this.$route.query.sort === 'newest') {
-          this.sort = this.$route.query.sort
+        this.sort = this.$route.query.sort
+        // 验证sort参数
+        if (this.sort !== undefined) {
+          if (this.sort !== 'popular' && this.sort !== 'newest') {
+            // sort参数不正确
+            toastr.error('invalid sort: ' + this.sort)
+            return
+          }
         }
-        console.log('here sort= ' + this.sort)
+        var url = `${process.env.API_ROOT}/article/list`
+        if (this.sort !== undefined) {
+          url = url + `?sort=` + this.sort
+        }
         // 最新文章
-        this.$http.get(`${process.env.API_ROOT}/article/list.do?sort=` + this.sort).then(response => {
-          console.log(response.data.data.list)
-          this.articleList = response.data.data.list
-          this.articleTotal = response.data.data.total
+        this.$http.get(url).then(response => {
+          if (response.data.status === 0) {
+            this.articleList = response.data.data.list
+            // alert(this.articleList[0].user[0].avatar)
+            // this.articleTotal = response.data.data.total
+          }
         }, response => {
           console.log('error')
         })
@@ -315,28 +340,29 @@
         console.log(this.articleList.length === 0)
       },
       // 获取分类
-      getCategory: function () {
+      getCategories: function () {
         // 请求登入
-        this.$http.get(`${process.env.API_ROOT}/category/list.do`).then(response => {
-          console.log('分类：')
-          console.log(response.data)
+        this.$http.get(`${process.env.API_ROOT}/categories`).then(response => {
           if (response.data.status === 0) {
-            this.categoryList = response.data.data
+            this.categories = response.data.data
           }
         }, response => {
           console.log('error')
         })
       },
-      // 关注用户的文章
+      // 获取用户关注对象的文章
       followArticle: function () {
-        this.$http.get(`${process.env.API_ROOT}/article/follow.do`).then(response => {
+        this.$http.get(`${process.env.API_ROOT}/article/getFollowArticle`).then(response => {
           if (response.data.status === 0) {
-            console.log('关注的用户文章：')
-            console.log(response.data.data)
             this.articleList = response.data.data.list
           } else if (response.data.status === 10) {
-            // 未登入
-            window.location.href = '/login'
+            // 未登录
+            this.$router.push({
+              path: '/login',
+              query: {
+                redirect: this.$router.currentRoute.fullPath
+              }
+            })
           } else {
             alert('error')
           }

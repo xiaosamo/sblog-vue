@@ -1,9 +1,10 @@
 <template>
   <div id="app">
     <!--导航条-->
-    <v-header @change="handleChange" :kw="keyword"></v-header>
+    <!--定义一个方法来监听子组件的状态-->
+    <v-header @change="handleChange"></v-header>
     <!--内容部分-->
-    <div class="container content" id="content">
+    <div class="container content" id="content" @scroll="handleScroll()">
       <div class="row">
         <!--主页左边-->
         <div class="col-md-8 left-text" >
@@ -15,47 +16,49 @@
                   <!--文章头部图片或视频-->
                   <div>
                     <!--如果是视频-->
-                    <div v-if="article.isVedio">
-                      <video class="img-thumbnail img-responsive center-block article-img" :src="article.articleImg"
-                             controls="controls">
-                      </video>
-                    </div>
+                    <!--<div v-if="article.isVedio">-->
+                    <!--<video class="img-thumbnail img-responsive center-block article-img" :src="article.articleImg"-->
+                    <!--controls="controls">-->
+                    <!--</video>-->
+                    <!--</div>-->
 
                     <!--否则是图片-->
-                    <div v-else>
-                      <a :href="'/article/'+article.articleId">
+                    <div>
+                      <a :href="'/article/'+article.id">
                         <img class="img-thumbnail img-responsive center-block article-img" :src="article.articleImg" alt="">
                       </a>
                     </div>
                   </div>
                   <!--<a href="@{'/article/'+${article.articleId}}">-->
                   <!--<a >-->
-                  <!--<img class="img-thumbnail img-responsive center-block article-img" src="http://blog.zhangruipeng.me/hexo-theme-icarus/gallery/shoes.jpg" alt="">-->
+                  <!--<img class="img-thumbnail img-responsive center-block article-img" src="http://blog.zhangruipeng.me/hexo-theme-icarus/gallery/shoes.jpg"alt="">-->
                   <!--文章内容部分-->
                   <div class="item article-card">
                     <!--用户头像-->
-                    <a :href="'/user/'+article.userId">
-                      <img class="img-circle article-user-img" v-bind:src="article.userImg" alt="">
+                    <a :href="'/user/'+article.user.id">
+                      <img class="img-circle article-user-img" v-bind:src="article.user.avatar" alt="">
                     </a>
                     <span>
-        <a :href="'/user/'+article.userId">{{article.userName}}</a>
-      <small>{{article.sign}}</small>
-      </span>
+                        <a :href="'/user/'+article.user.id">{{article.user.name}}</a>
+                      <!--<small>{{article.sign}}</small>-->
+                    </span>
                     <div class="article">
                       <h3>
-                        <a :href="'/article/'+article.articleId">{{article.title}}</a>
+                        <a :href="'/article/'+article.id">{{article.title}}</a>
                       </h3>
                       <small class="article-type">{{article.categoryName}}</small>
                       <div class="article-content lead">
-                        <a :href="'/article/'+article.articleId">
-                          {{article.summary}}
+                        <a :href="'/article/'+article.id" >
+                          <div v-html="article.content.substring(0,280)">
+                          </div>
+                          <!--{{article.content}}-->
                         </a>
                       </div>
                       <div class="container">
                         <!--<span class="date">2014-14-14</span>-->
-                        <i class="fa  fa-eye">{{article.showCount}}</i>
+                        <i class="fa  fa-eye">{{article.viewCount}}</i>
                         <i class="fa  fa-comment-o">{{article.commentCount}}</i>
-                        <i class="fa  fa-star">{{article.loveCount}}</i>
+                        <i class="fa  fa-star">{{article.likedCount}}</i>
                         <!--<i class="fa  fa-calendar">{{article.createTime}}</i>-->
                         <i class="fa  fa-calendar">{{article.createTime | dateFormat}}</i>
                         <!--calendar-->
@@ -92,22 +95,14 @@
           <div class="container-fluid article-category">
             <span>文章分类</span>
             <div class="list-group" >
-              <!--<div v-for="category in categoryList" :key="category.id">-->
+              <!--<div v-for="category in categories" :key="category.id">-->
               <a href="javascript:void(0);" class="category list-group-item"
-                 v-for="category in categoryList" :key="category.id"
+                 v-for="category in categories" :key="category.id"
                  @click="getCategoryArticle(category.name)"
               >
                 {{category.name}}
               </a>
-              <!--</div>-->
 
-              <!--<a href="/article/search?category=后端" class="category list-group-item">后端</a>-->
-              <!--<a href="/article/search?category=Android" class="category list-group-item">Android</a>-->
-              <!--<a href="/article/search?category=ios" class="category list-group-item">ios</a>-->
-              <!--<a href="/article/search?category=设计" class="category list-group-item">设计</a>-->
-              <!--<a href="/article/search?category=工具资源" class="category list-group-item">工具资源</a>-->
-              <!--<a href="/article/search?category=未分类" class="category list-group-item">未分类</a>-->
-              <!--<a href="/article/search?category=其它" class="category list-group-item">其它</a>-->
             </div>
 
           </div>
@@ -153,7 +148,7 @@
       return {
         articleList: [],
         popularUserList: [],
-        categoryList: [], // 分类列表
+        categories: [], // 分类列表
         links: [
           {
             text: '登入',
@@ -164,18 +159,32 @@
             route: '/register'
           }
         ],
-        keyword: ''
+        // 搜索词
+        query: ''
       }
     },
     mounted: function () {
-      // 获取首页文章
-      // this.getIndexArticle()
+      this.query = this.$route.query.query
       // 搜索
       this.search()
+      // alert(this.query)
+      // 获取首页文章
+      // this.getIndexArticle()
       // 热门用户
-      this.getPopularUser()
-
-      this.getCategory()
+      // this.getPopularUser()
+      this.getCategories()
+    },
+    watch: {
+      // 'query': function (now) {
+      //   监听query的变化
+        // alert('query=' + now)
+      // }
+      $route () {
+        // 监听路由参数query的变化
+        this.query = this.$route.query.query
+        this.search()
+        // alert(this.query)
+      }
     },
     methods: {
       getPopularUser: function () {
@@ -213,21 +222,22 @@
         })
       },
       // 当点击搜索时触发
-      handleChange: function (article) {
-        this.articleList = article
-        console.log('this.articleList=' + this.articleList)
-        console.log(this.articleList === null)
-        console.log(this.articleList == null)
-        console.log(this.articleList.length === 0)
+      handleChange: function (query) {
+        // query就是子组件传过来的值
+        // this.query = query
+        // alert(this.query)
+        // this.articleList = article
+        // console.log('this.articleList=' + this.articleList)
+        // console.log(this.articleList === null)
+        // console.log(this.articleList == null)
+        // console.log(this.articleList.length === 0)
       },
       // 获取分类
-      getCategory: function () {
+      getCategories: function () {
         // 请求登入
-        this.$http.get(`${process.env.API_ROOT}/category/list.do`).then(response => {
-          console.log('分类：')
-          console.log(response.data)
+        this.$http.get(`${process.env.API_ROOT}/categories`).then(response => {
           if (response.data.status === 0) {
-            this.categoryList = response.data.data
+            this.categories = response.data.data
           }
         }, response => {
           console.log('error')
@@ -235,14 +245,12 @@
       },
       // 搜索
       search: function () {
-        // console.log('参数=' + this.$route.query.kw)
-        this.keyword = this.$route.query.kw
-        this.$http.get(`${process.env.API_ROOT}/article/search.do?keyword=` + this.keyword).then(response => {
+        this.$http.get(`${process.env.API_ROOT}/article/search?query=` + this.query).then(response => {
           if (response.data.status === 0) {
-            // alert('回车，kw=' + this.keyword)
+            // alert('222')
+            // alert(this.query)
+            // alert('回车，kw=' + this.query)
             this.articleList = response.data.data.list
-            console.log('搜索：')
-            console.log(response.data)
           }
         }, response => {
           console.log('error')

@@ -15,17 +15,17 @@
           <div class="col-sm-8 blog-main">
             <div class="blog-post">
               <div class="blog-top">
-                <a href="@{'/user/'+${articleBlogger.bloggerId}}">
-                  <img class="img-circle user-img img"  :src="article.userImg"  alt="">
+                <a :href="'/user/'+article.user.id">
+                  <img class="img-circle user-img img"  :src="article.user.avatar"  alt="">
                 </a>
                 <!--<p class="blog-post-meta">2018-6-1 <a href="#"></a></p>-->
-                <a href="@{'/user/'+${articleBlogger.bloggerId}}" class="article-use">{{article.name}}</a>
+                <a :href="'/user/'+article.user.id" class="article-use">{{article.user.name}}</a>
                 <a :href="'/blog/edit/'+article.id" class="article-edit" v-if="isUser">编辑</a>
                 <a href="javascript:void(0)" id="user-delete" class="user-delete" v-if="isUser" @click="delArticle(article.id)">删除</a>
                 <small class="time">{{ article.createTime | dateFormat}}</small>
               </div>
               <!--文章内容部分-->
-              <div id="main-content"  v-html="article.htmlContent">
+              <div id="main-content"  v-html="article.content">
               </div><!-- /.blog-post -->
             </div>
             <!--<nav>-->
@@ -38,12 +38,12 @@
             <div class="btn like-group">
               <a href="javascript:void(0)" id="loveArticle">
                 <!--喜欢的-->
-                <div v-if="article.isLove" id="Like" @click="love('delete', article.id)">
-                <i class="fa fa-heart"></i>    喜欢 | <span class="like-count">{{article.loveCount}}</span>
+                <div v-if="article.isLiked" id="Like" @click="cancelLike(article.id)">
+                <i class="fa fa-heart"></i>    喜欢 | <span class="like-count">{{article.likedCount}}</span>
                 </div>
                 <!--没喜欢-->
-                <div v-else id="notLike" @click="love('increase', article.id)">
-                  <i class="fa fa-heart-o" ></i>    喜欢 | <span class="like-count">{{article.loveCount}}</span>
+                <div v-else id="notLike" @click="like(article.id)">
+                  <i class="fa fa-heart-o" ></i>    喜欢 | <span class="like-count">{{article.likedCount}}</span>
                 </div>
                 <!--<div  id="Like">-->
                 <!--<i class="fa fa-heart-o"></i>    喜欢 |-->
@@ -62,17 +62,23 @@
             <div class="panel  comment-list">
               <ul class="form-group">
                 <li v-for="comment in comments" :key="comment.id">
-                  <a class="" href="@{'/user/'+${comment.bloggerId}}">
-                    <img class="img-circle user-img img"  :src="comment.userImg" alt="">
+                  <a class="" :href="'/user/'+comment.user.id" >
+                    <img class="img-circle user-img img"  :src="comment.user.avatar" alt="">
                   </a>
-                  <a class="comment-user" href="@{'/user/'+${comment.bloggerId}}" >{{comment.userName}}</a>
-                  <small text="${#dates.format(comment.createTime, 'yyyy-MM-dd HH:mm')}">2018-6-2 12:59</small>
-                  <!--删除评论-->
-                  <a class="comment-delete" href="javascript:void(0)" id="comment-delete" v-if="user.username === comment.username" @click="delComment(comment.id)">
-                    <i class="fa fa-trash-o"></i>
-                  </a>
-                  <p>{{comment.content}}</p>
-                  <hr>
+                  <div class="comment-div">
+                    <a class="comment-user" :href="'/user/'+comment.user.id" style="margin-bottom: 3px;">{{comment.user.name}}</a>
+                    <div >
+                      {{comment.content}}
+                    </div>
+                    <small text="${#dates.format(comment.createTime, 'yyyy-MM-dd HH:mm')}">{{comment.createTime | dateFormat}}</small>
+
+                    <!--删除评论-->
+                    <a class="comment-delete" href="javascript:void(0)" id="comment-delete" v-if="isCurUserComment(comment.user.id)" @click="delComment(comment.id)">
+                      <i class="fa fa-trash-o"></i>
+                    </a>
+                  </div>
+                  <!--<p></p>-->
+                  <!--<hr style="height: 0.1px;">-->
                 </li>
               </ul>
             </div>
@@ -88,8 +94,10 @@
             <br>
             <div class="sidebar-module">
               <h4>最新文章</h4>
-              <ol class="list-unstyled">
-                <li each="otherArticle:${otherArticles}"><a href="@{'/article/'+${otherArticle.articleId}}" text="${otherArticle.articleTitle}">March 2014</a></li>
+              <ol class="list-unstyled" v-for="article in userLatestArticles" :key="article.id">
+                <li style="padding: 1px;">
+                  <a :href="'/article/'+article.id">{{article.title}}</a>
+                </li>
               </ol>
             </div>
             <!--<br>-->
@@ -120,17 +128,9 @@
 
 <script>
   import header from '@/components/header/header'
-  // import '../../../static/bootstrap/css/bootstrap.css'
-  // import '../../../static/bootstrap/css/bootstrap-theme.css'
-  // import '../../../static/css/dropload.css'
-  // import '../../../static/font-awesome-4.7.0/css/font-awesome.css'
-  // import '../../../static/css/main.css'
-  // import '../../../static/toastr/toastr.css'
-  // import '../../../static/toastr/toastr.min'
-  // import '../../../static/js/jquery-3.2.1'
-  // import '../../../static/bootstrap/js/bootstrap'
   import {formatTime} from '../../utils/time'
-
+  import * as toastr from '@/styles/toastr/toastr.min'
+  import store from '@/store/store'
   export default {
     name: 'article',
     components: {
@@ -139,10 +139,14 @@
     data () {
       return {
         id: '',
-        article: [],
+        article: {
+          // 使用{{}}双花括号在html页面进行数据绑定时，从一个对象中获取，超过两个.就报错
+          user: {}
+        },
         comments: [],
         message: '', // 评论内容,
         user: [], // 当前用户,
+        userLatestArticles: {}, // 用户最新的文章
         isUser: false // 文章是否是当前用户的
       }
     },
@@ -153,23 +157,21 @@
       }
     },
     mounted: function () {
-      this.getArticle() // 获取文章信息
+      this.id = this.$route.params.id
+
+      // 获取文章信息
+      this.getArticle()
+      // 获取文章评论
+      this.getComment()
     },
     methods: {
       // 加载文章内容,包括评论
       getArticle: function () {
-        this.id = this.$route.params.id
         this.$http.get(`${process.env.API_ROOT}/article/` + this.id).then(response => {
-          console.log('文章内容')
-          console.log(response.data)
-          // get body data
-          // this.someData = response.body;
-
           if (response.data.status === 0) {
             this.article = response.data.data
-            this.comments = this.article.commentList
-
-            this.getUserInfo() // 获取当前用户信息
+            // 获取用户最新的文章
+            this.getLatestArticle(this.article.user.id)
           }
         }, response => {
           console.log('error')
@@ -177,26 +179,27 @@
       },
       // 添加评论
       addComment: function () {
-        this.$http.post(`${process.env.API_ROOT}/comment/add.do`, {
+        if (this.message.trim().length === 0) {
+          toastr.warning('内容不能为空')
+          return
+        }
+        this.$http.post(`${process.env.API_ROOT}/comment/add`, {
           'articleId': this.id,
           'content': this.message
         }, {emulateJSON: true}).then(response => {
-          console.log(response.data)
-          // get body data
-          // this.someData = response.body;
           if (response.data.status === 0) {
-            // 评论成功，获取评论列表
+            // 评论成功，重新获取评论列表
             this.getComment()
           } else if (response.data.status === 10) {
-            // alert('未登入')
-            // this.$router.push({
-            //   path: '/login'
-              // query: {redirect: this.to.fullPath} // 如果你使用钩子函数，your path 可以替换成to.fullPath
-            // })
-            // alert('未登入')
-            window.location.href = '/login'
+            // 未登录
+            this.$router.push({
+              path: '/login',
+              query: {
+                redirect: this.$router.currentRoute.fullPath
+              }
+            })
           } else {
-            alert('失败')
+            toastr.error(response.data.msg)
           }
         }, response => {
           console.log('error')
@@ -206,14 +209,11 @@
       getComment: function () {
         this.$http.get(`${process.env.API_ROOT}/comment/` + this.id).then(response => {
             if (response.data.status === 0) {
-              console.log('评论')
-              console.log(response.data)
               // 评论成功
               this.comments = response.data.data
               // 清空评论区
               this.message = ''
             } else {
-              alert('失败')
             }
           },
           response => {
@@ -222,11 +222,32 @@
       },
       // 删除评论
       delComment: function (id) {
-        this.$http.get(`${process.env.API_ROOT}/comment/delete.do?id=` + id).then(response => {
+        this.$http.delete(`${process.env.API_ROOT}/comment/` + id).then(response => {
             if (response.data.status === 0) {
-              console.log(response.data)
               // 重新加载评论
               this.getComment()
+            } else {
+              toastr.error('删除失败')
+            }
+          },
+          response => {
+            console.log('error')
+          })
+      },
+      // 点赞文章
+      like: function (id) {
+        this.$http.put(`${process.env.API_ROOT}/like/` + id).then(response => {
+            if (response.data.status === 0) {
+              // 重新加载文章
+              this.getArticle()
+            } else if (response.data.status === 10) {
+              // 未登录
+              this.$router.push({
+                path: '/login',
+                query: {
+                  redirect: this.$router.currentRoute.fullPath
+                }
+              })
             } else {
               alert('失败')
             }
@@ -235,17 +256,20 @@
             console.log('error')
           })
       },
-      // 添加或删除喜欢
-      love: function (type, id) {
-        this.$http.get(`${process.env.API_ROOT}/article/love.do?type=` + type + `&id=` + id).then(response => {
-            console.log(response.data)
+      // 取消点赞
+      cancelLike: function (id) {
+        this.$http.delete(`${process.env.API_ROOT}/like/` + id).then(response => {
             if (response.data.status === 0) {
-              console.log('结果')
-              console.log(response.data)
               // 重新加载文章
               this.getArticle()
             } else if (response.data.status === 10) {
-              window.location.href = '/login'
+              // 未登录
+              this.$router.push({
+                path: '/login',
+                query: {
+                  redirect: this.$router.currentRoute.fullPath
+                }
+              })
             } else {
               alert('失败')
             }
@@ -268,6 +292,14 @@
           console.log('error')
         })
       },
+      // 判断此评论是否是当前用户
+      isCurUserComment: function (uid) {
+        this.loginUser = store.getters.getUser
+        if (this.loginUser != null && this.loginUser.id != null) {
+          return this.loginUser.id === uid
+        }
+        return false
+      },
       judgeUser: function () {
         console.log('this.user.username=' + this.user.username)
         console.log('this.article.username=' + this.article.username)
@@ -281,6 +313,19 @@
         this.$http.get(`${process.env.API_ROOT}/article/delete.do?id=` + id).then(response => {
             if (response.data.status === 0) {
               window.location.href = '/'
+            } else {
+              alert('失败')
+            }
+          },
+          response => {
+            console.log('error')
+          })
+      },
+      // 获取用户最新的文章
+      getLatestArticle: function (uid) {
+        this.$http.get(`${process.env.API_ROOT}/article/getLatestArticle?uid=` + uid).then(response => {
+            if (response.data.status === 0) {
+              this.userLatestArticles = response.data.data
             } else {
               alert('失败')
             }
@@ -354,6 +399,7 @@
   }
   .img{
     height: 40px;
+    margin-right: 4px;
   }
 
   .blog-post .img-circle{
@@ -479,4 +525,14 @@
     padding-top: 10px;
   }
 
+  .comment-div {
+    margin-top: 5px;
+    padding-bottom: 8px;
+    padding-left: 10px;
+    border-bottom: 1px solid #f1f1f1;
+  }
+  .comment-div div{
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
 </style>

@@ -91,3 +91,8 @@ export function matchType (fileName) {
   result = 'other'
   return result
 }
+
+
+// 定义全局常量
+const NO_LOGIN = 10
+window.NO_LOGIN = NO_LOGIN

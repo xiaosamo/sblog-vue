@@ -1,14 +1,14 @@
 <template>
   <div>
     <!--导航条-->
-    <v-header></v-header>
+    <v-header :loginUser="loginUser"></v-header>
     <div id="content" style="min-width: 1000px">
       <!--用户头部，背景图片-->
-      <div class="container  user-header" :style="{'background-image': 'url(' + userPage.bgImg + ')'}">
+      <div class="container  user-header" :style="{'background-image': 'url(' + userInfo.bgImg + ')'}">
         <div class="row" style="position: relative;">
           <a class="">
-            <!--<img class="img-rounded" :src="userPage.img" alt="">-->
-            <b-img slot="aside" class="img-rounded" :src="userPage.img" />
+            <!--<img class="img-rounded" :src="userInfo.img" alt="">-->
+            <b-img slot="aside" class="img-rounded" :src="userInfo.avatar" />
           </a>
 
           <div class="user-header-info">
@@ -17,31 +17,31 @@
             <!--<input type="text" id="curUsername" value="${blogger.bloggerUsername}"  hidden>-->
             <!--<input type="text" id="bgId" value="${bloggerHome.bloggerBgImg}"  hidden>-->
             <div class="user-follow">
-              <h2>{{userPage.name}}</h2>
+              <h2>{{userInfo.name}}</h2>
 
-              <b-button class="chat" variant="success"  id="follow-btn" v-if="!isUser && follow" @click="doFollow(userPage.username)">
+              <b-button class="chat" variant="success"  id="follow-btn" v-if="!isCurUser() && isFollow" @click="cancelFollow(userInfo.id)">
                 已关注 <i class="fa fa-check"></i>
               </b-button>
 
-              <b-button class="chat" variant="outline-success"  id="follow-btn" v-if="!isUser && !follow" @click="doFollow(userPage.username)">
+              <b-button class="chat" variant="outline-success"  id="follow-btn" v-if="!isCurUser() && !isFollow" @click="addFollow(userInfo.id)">
                 <span>关注</span>
               </b-button>
-              <!--<button class="btn btn-success chat" id="follow-btn" v-if="!isUser" @click="doFollow(userPage.username)">-->
+              <!--<button class="btn btn-success chat" id="follow-btn" v-if="!isCurUser" @click="doFollow(userInfo.username)">-->
                 <!--<span v-if="follow">已关注 <i class="fa fa-check"></i> </span>-->
                 <!--<span v-else><i class="fa fa-plus"></i>关注</span>-->
               <!--</button>-->
 
               <!--<b-link href="#foo" class="chat" variant="default">私信</b-link>-->
-              <b-button v-if="!isUser" class="chat" variant="default" @click="toChat(userPage.id)">私信</b-button>
-              <!--<a :href="'/chat/'+ userPage.id" v-if="!isUser" class="btn btn-default chat">私信</a>-->
+              <b-button v-if="!isCurUser()" class="chat" variant="default" @click="toChat(userInfo.id)">私信</b-button>
+              <!--<a :href="'/chat/'+ userInfo.id" v-if="!isCurUser" class="btn btn-default chat">私信</a>-->
             </div>
-            <p>{{userPage.sign}}</p>
+            <p>{{userInfo.sign}}</p>
             <!--上传组件-->
             <input type="file" id="file" ref="file" @change="upload($event)">
           </div>
 
-          <!--<b-button-group v-if="isUser" style="position: absolute;right: 10px; top:190px;">-->
-          <div v-if="isUser" style="position: absolute;right: 10px; top:190px;">
+          <!--<b-button-group v-if="isCurUser" style="position: absolute;right: 10px; top:190px;">-->
+          <div v-if="isCurUser()" style="position: absolute;right: 10px; top:190px;">
             <b-button variant="outline-primary" class="btn-edit" @click="changeUrl('/user/settings/profile')">
               编辑资料
             </b-button>
@@ -50,11 +50,11 @@
             <!--<b-button>Button 2</b-button>-->
             <!--<b-button>Button 2</b-button>-->
           </div>
-          <!--<a href="/user/settings/profile" v-if="isUser"  class="btn  edit">-->
+          <!--<a href="/user/settings/profile" v-if="isCurUser"  class="btn  edit">-->
             <!--编辑资料-->
           <!--</a>-->
 
-          <!--<a href="javascript:void(0)" id="background"  class="btn  edit" v-if="isUser" @click="changeBgImg">-->
+          <!--<a href="javascript:void(0)" id="background"  class="btn  edit" v-if="isCurUser" @click="changeBgImg">-->
             <!--更换背景-->
           <!--</a>-->
         </div>
@@ -71,30 +71,31 @@
               <!--我的文章-->
               <div role="tabpanel" class="tab-pane active lists" id="article">
                 <!--文章部分-->
-                <div class="item article-card" v-for="userArticle in userPage.userArticles" :key="userArticle.articleId">
+                <div class="item article-card" v-for="article in articles" :key="article.id">
                   <!--用户头像-->
-                  <a :href="'/user/'+userArticle.userId">
-                    <img class="img-circle user-img article-user-img" :src="userArticle.userImg">
+                  <a :href="'/user/'+article.user.id">
+                    <img class="img-circle user-img article-user-img" :src="article.user.avatar">
                   </a>
                   <span>
-                        <a :href="'/user/'+userArticle.userId">{{userArticle.userName}}</a>
-                        <small>{{userArticle.userSign}}</small>
+                        <a :href="'/user/'+article.user.id">{{article.user.name}}</a>
+                        <!--<small v-if="article.user.sign.length > 0">:{{article.user.sign}}</small>-->
                 </span>
                   <div class="article">
-                    <h3 class="title"><a :href="'/article/'+userArticle.articleId">{{userArticle.title}}</a></h3>
-                    <small class="article-type">{{userArticle.categoryName}}</small>
+                    <h3 class="title"><a :href="'/article/'+article.id">{{article.title}}</a></h3>
+                    <small class="article-type">{{article.category.name}}</small>
                     <div class="article-content lead" >
-                      <a :href="'/article/'+userArticle.articleId">
-                        {{userArticle.summary}}
+                      <a :href="'/article/'+article.id">
+                        <div v-html="article.content.substring(0,280)">
+                        </div>
                       </a>
-
                     </div>
                     <div class="container">
                       <!--<span class="date">2014-14-14</span>-->
-                      <i class="fa  fa-eye">{{userArticle.showCount}}</i>
-                      <i class="fa  fa-comment-o">{{userArticle.commentCount}}</i>
-                      <i class="fa  fa-star">{{userArticle.loveCount}}</i>
-                      <i class="fa  fa-calendar">{{userArticle.createTime | dateFormat}}</i>
+                      <i class="fa  fa-eye">{{article.viewCount}}</i>
+                      <i class="fa  fa-comment-o">{{article.commentCount}}</i>
+                      <i class="fa  fa-star">{{article.likedCount}}</i>
+                      <!--<i class="fa  fa-calendar">{{article.createTime}}</i>-->
+                      <i class="fa  fa-calendar">{{article.createTime | dateFormat}}</i>
                       <!--calendar-->
                     </div>
 
@@ -104,34 +105,35 @@
 
               </div>
             </b-tab>
-            <b-tab title="我喜欢的">
+            <b-tab title="我喜欢的" @click="getUserLikedArticle()">
               <!--喜欢的-->
               <div role="tabpanel" class="tab-pane" id="love">
                 <!--文章部分-->
-                <div class="item article-card" v-for="userLoveArticle in userPage.userLoveArticles" :key="userLoveArticle.articleId">
+                <div class="item article-card" v-for="userLikedArticle in userLikedArticles" :key="userLikedArticle.id">
                   <!--用户头像-->
-                  <a :href="'/user/'+userLoveArticle.userId">
-                    <img class="img-circle user-img article-user-img" :src="userLoveArticle.userImg">
+                  <a :href="'/user/'+userLikedArticle.user.id">
+                    <img class="img-circle user-img article-user-img" :src="userLikedArticle.user.avatar">
                   </a>
                   <span>
-                        <a :href="'/user/'+userLoveArticle.userId">{{userLoveArticle.userName}}</a>
-                        <small>{{userLoveArticle.userSign}}</small>
+                        <a :href="'/user/'+userLikedArticle.user.id">{{ userLikedArticle.user.name}}</a>
+                    <!--<small>{{userLikedArticle.userSign}}</small>-->
                 </span>
                   <div class="article">
-                    <h3 class="title"><a :href="'/article/'+userLoveArticle.articleId">{{userLoveArticle.title}}</a></h3>
-                    <small class="article-type">{{userLoveArticle.categoryName}}</small>
+                    <h3 class="title"><a :href="'/article/'+userLikedArticle.id">{{userLikedArticle.title}}</a></h3>
+                    <small class="article-type">{{userLikedArticle.category.name}}</small>
                     <div class="article-content lead" >
-                      <a :href="'/article/'+userLoveArticle.articleId">
-                        {{userLoveArticle.summary}}
+                      <a :href="'/article/'+userLikedArticle.id">
+                        <div v-html="userLikedArticle.content.substring(0,280)">
+                        </div>
                       </a>
 
                     </div>
                     <div class="container">
                       <!--<span class="date">2014-14-14</span>-->
-                      <i class="fa  fa-eye">{{userLoveArticle.showCount}}</i>
-                      <i class="fa  fa-comment-o">{{userLoveArticle.commentCount}}</i>
-                      <i class="fa  fa-star">{{userLoveArticle.loveCount}}</i>
-                      <i class="fa  fa-calendar">{{userLoveArticle.createTime | dateFormat}}</i>
+                      <i class="fa  fa-eye">{{userLikedArticle.viewCount}}</i>
+                      <i class="fa  fa-comment-o">{{userLikedArticle.commentCount}}</i>
+                      <i class="fa  fa-star">{{userLikedArticle.likedCount}}</i>
+                      <i class="fa  fa-calendar">{{userLikedArticle.createTime | dateFormat}}</i>
                       <!--calendar-->
                     </div>
 
@@ -141,26 +143,26 @@
 
               </div>
             </b-tab>
-            <b-tab title="关注的人">
+            <b-tab title="关注的人" @click="getFollowedCollection()">
               <!--关注的-->
               <div role="tabpanel" class="tab-pane" id="follow">
                 <!--关注用户-->
-                <div class="item article-card" v-for="userFollow in userPage.followList" :key="userFollow.id">
+                <div class="item article-card" v-for="userInfo in userFollowCollection" :key="userInfo.id">
                   <!--用户头像-->
-                  <a :href="'/user/'+userFollow.id">
-                    <img class="img-circle user-img article-user-img" :src="userFollow.img">
+                  <a :href="'/user/'+userInfo.id">
+                    <img class="img-circle user-img article-user-img" :src="userInfo.avatar">
                   </a>
                   <span>
-                        <a :href="'/user/'+userFollow.id">{{userFollow.name}}</a>
-                        <small>，{{userFollow.sign}}</small>
+                        <a :href="'/user/'+userInfo.id">{{userInfo.name}}</a>
+                        <!--<small>，{{userFollow.sign}}</small>-->
                 </span>
-                  <a :href="'/chat/'+ userFollow.id"  class="btn btn-default" id="chat-btn">私信</a>
+                  <a :href="'/chat/'+ userInfo.id"  class="btn btn-default" id="chat-btn">私信</a>
 
                   <button class="btn btn-success follow-btn"
-                          v-if="isUser"
+                          v-if="isCurUser()"
                           @mouseenter="mouseEnter($event)"
                           @mouseleave="mouseLeave($event)"
-                          @click="doFollow(userFollow.username)">
+                          @click="cancelFollow(userInfo.id)">
                     已关注<i class="fa fa-check"></i>
                   </button>
 
@@ -168,26 +170,27 @@
 
               </div>
             </b-tab>
-            <b-tab title="已评论的">
+            <b-tab title="已评论的" @click="getUserCommentArticles()">
               <!--评论的-->
               <div role="tabpanel" class="tab-pane" id="comment">
 
                 <!--文章部分-->
-                <div class="item article-card" v-for="userCommentArticle in userPage.userCommentArticles" :key="userCommentArticle.articleId">
+                <div class="item article-card" v-for="userCommentArticle in userCommentArticles" :key="userCommentArticle.id">
                   <!--用户头像-->
-                  <a :href="'/user/'+userCommentArticle.userId">
-                    <img class="img-circle user-img article-user-img" :src="userCommentArticle.userImg">
+                  <a :href="'/user/'+userCommentArticle.user.id">
+                    <img class="img-circle user-img article-user-img" :src="userCommentArticle.user.avatar">
                   </a>
                   <span>
-              <a :href="'/user/'+userCommentArticle.userId">{{userCommentArticle.userName}}</a>
-              <small>{{userCommentArticle.userSign}}</small>
+              <a :href="'/user/'+userCommentArticle.user.id">{{userCommentArticle.user.name}}</a>
+              <!--<small>{{userCommentArticle.userSign}}</small>-->
             </span>
                   <div class="article">
-                    <h3 class="title"><a :href="'/article/'+userCommentArticle.articleId">{{userCommentArticle.title}}</a></h3>
-                    <small class="article-type">{{userCommentArticle.categoryName}}</small>
+                    <h3 class="title"><a :href="'/article/'+userCommentArticle.id">{{userCommentArticle.title}}</a></h3>
+                    <small class="article-type">{{userCommentArticle.category.name}}</small>
                     <div class="article-content lead" >
-                      <a :href="'/article/'+userCommentArticle.articleId">
-                        {{userCommentArticle.summary}}
+                      <a :href="'/article/'+userCommentArticle.id">
+                        <div v-html="userCommentArticle.content.substring(0,280)">
+                        </div>
                       </a>
 
                     </div>
@@ -216,6 +219,8 @@
 
 <script>
   import header from '@/components/header/header'
+  import store from '@/store/store'
+
   /* eslint-disable */
   import $ from 'jquery'
   import {formatTime} from '../../utils/time'
@@ -235,22 +240,25 @@
     data () {
       return {
         userId: '',
-        user: [], // 当前登入的用户信息
-        isUser: false, // 是否是浏览的自己的主页
-        userPage: [],  // 当前页面的用户信息
-        follow: false, // 关注,
+        userInfo: {}, // 当前页面用户信息
+        // isCurUser: false, // 是否是浏览的自己的主页
+        loginUser: {},  // 登录的用户信息
+        articles: {}, // 用户的文章
+        userCommentArticles: {}, // 用户评论的文章
+        userLikedArticles: {},  // 用户点赞的文章
+        userFollowCollection: {}, // 用户关注的集合
+        isFollow: false
       }
     },
     mounted: function () {
       this.userId = this.$route.params.id
-      console.log('userId=' + this.userId)
+
       this.getUserInfo()
-      console.log('user = '+this.user.username)
 
-      this.getPageUser()
-      console.log('userPage = '+this.userPage.username)
+      // 获取用户的文章
+      this.getUserArticles()
 
-
+      this.isCurrentUserFollow()
 
     },
     methods: {
@@ -260,19 +268,11 @@
       changeUrl: function (url) {
         window.location.href = url
       },
-      // 获取当前登入的用户
+      // 获取用户信息
       getUserInfo: function () {
-        console.log("get token=" + sessionStorage.getItem('token'));
-
-        this.$http.get(`${process.env.API_ROOT}/user/get_user_info.do`).then(response => {
-          console.log("获取当前登入的用户=");
-          console.log(response.data);
-          // get body data
-          // this.someData = response.body;
-
+        this.$http.get(`${process.env.API_ROOT}/user/getUserInfo?uid=` + this.userId).then(response => {
           if (response.data.status === 0) {
-            this.user = response.data.data;
-            console.log(this.user);
+            this.userInfo = response.data.data
             // 设置背景图片
             // $('.user-header').css("background-image","url('"+$('#bgId').val()+"')");
 
@@ -282,39 +282,89 @@
           console.log('error')
         })
       },
-      // 获取当前页的用户信息
-      getPageUser: function () {
-        console.log("get token=" + sessionStorage.getItem('token'));
-
-        this.$http.get(`${process.env.API_ROOT}/user/` + this.userId).then(response => {
-          console.log("获取当前页的用户信息=");
-          console.log(response.data);
-          // get body data
-          // this.someData = response.body;
-
+      // 判断当前页面是否属于用户
+      isCurUser: function(){
+        if (this.userId == null || this.userId.length === 0) {
+          return false
+        }
+        this.loginUser = store.getters.getUser
+        if (this.loginUser != null && this.loginUser.id != null) {
+          return this.loginUser.id === this.userId;
+        }
+        return false;
+      },
+      isCurrentUserFollow: function(){
+        this.$http.get(`${process.env.API_ROOT}/follow/isCurrentUserFollow?uid=` + this.userId).then(response => {
           if (response.data.status === 0) {
-            this.userPage = response.data.data
-            // this.user = response.data.data;
-            // console.log(this.user);
-            // 设置背景图片
-            // $('.user-header').css("background-image","url('"+$('#bgId').val()+"')");
-
-            this.judgeUser()
-            this.judgeFollow()
+            this.isFollow = response.data.data
           }
-
         }, response => {
           console.log('error')
-        });
+        })
       },
-      judgeUser: function () {
-        console.log()
-        if (this.user.username === this.userPage.username) {
-          this.isUser = true;
-        } else {
-          this.isUser = false;
-        }
-        console.log('this.user.username=' + this.user.username + ',this.userPage.username=' + this.userPage.username + ',isUser=' + this.isUser)
+      // 获取用户关注的集合
+      getFollowedCollection: function(){
+        this.$http.get(`${process.env.API_ROOT}/follow/getFollowedCollection?uid=` + this.userId).then(response => {
+          if (response.data.status === 0) {
+            this.userFollowCollection = response.data.data
+          }
+        }, response => {
+          console.log('error')
+        })
+      },
+      // 获取当前页的用户信息
+      // getPageUser: function () {
+      //   console.log("get token=" + sessionStorage.getItem('token'));
+      //
+      //   this.$http.get(`${process.env.API_ROOT}/user/get_user_info?uid=` + this.userId).then(response => {
+      //     console.log("获取当前页的用户信息=");
+      //     console.log(response.data);
+      //     // get body data
+      //     // this.someData = response.body;
+      //
+      //     if (response.data.status === 0) {
+      //       this.userInfo = response.data.data
+      //       // this.user = response.data.data;
+      //       // console.log(this.user);
+      //       // 设置背景图片
+      //       // $('.user-header').css("background-image","url('"+$('#bgId').val()+"')");
+      //
+      //       // this.judgeUser()
+      //       // this.judgeFollow()
+      //     }
+      //
+      //   }, response => {
+      //     console.log('error')
+      //   });
+      // },
+      getUserArticles: function () {
+        this.$http.get(`${process.env.API_ROOT}/user/` + this.userId + `/articles`).then(response => {
+          if (response.data.status === 0) {
+            this.articles = response.data.data.list
+          }
+        }, response => {
+          console.log('error')
+        })
+      },
+      // 获取用户评论的文章
+      getUserCommentArticles: function () {
+        this.$http.get(`${process.env.API_ROOT}/article/getUserCommentArticle?uid=` + this.userId).then(response => {
+          if (response.data.status === 0) {
+            this.userCommentArticles = response.data.data.list
+          }
+        }, response => {
+          console.log('error')
+        })
+      },
+      // 获取用户点赞的文章
+      getUserLikedArticle: function () {
+        this.$http.get(`${process.env.API_ROOT}/article/getUserLikedArticle?uid=` + this.userId).then(response => {
+          if (response.data.status === 0) {
+            this.userLikedArticles = response.data.data.list
+          }
+        }, response => {
+          console.log('error')
+        })
       },
       // 上传图片
       upload: function (event) {
@@ -326,7 +376,7 @@
         this.$http.post(`${process.env.API_ROOT}/user/settings/bgImg`, formData, config).then(response => {
           console.log(response.data);
           if (response.data.status === 0) {
-            this.getPageUser() // 更新用户信息
+            // this.getPageUser() // 更新用户信息
           }
 
         }, response => {
@@ -337,34 +387,38 @@
       changeBgImg: function () {
         this.$refs.file.click()
       },
-      // 判断是否关注
-      judgeFollow: function () {
-        this.$http.get(`${process.env.API_ROOT}/user/judge_follow.do?username=` + this.userPage.username).then(response => {
-          console.log("是否关注=");
-          console.log(response.data);
+      // 关注关注
+      addFollow: function (id) {
+        this.$http.put(`${process.env.API_ROOT}/follow/` + id).then(response => {
           if (response.data.status === 0) {
-            this.follow = response.data.data
-            console.log("follow = " + this.follow)
+            this.isFollow = !this.isFollow
+          }else if (response.data.status === 10) {
+            // 未登录
+            this.$router.push({
+              path: '/login',
+              query: {
+                redirect: this.$router.currentRoute.fullPath
+              }
+            })
           }
         }, response => {
           console.log('error')
         });
       },
-      // 关注/取消关注
-      doFollow: function (username) {
-        this.$http.get(`${process.env.API_ROOT}/user/follow.do?username=` + username).then(response => {
-          console.log(" 关注/取消关注=");
-          console.log(response.data);
+      // 取消关注
+      cancelFollow: function (id) {
+        this.$http.delete(`${process.env.API_ROOT}/follow/` + id).then(response => {
           if (response.data.status === 0) {
-            this.follow = !this.follow
-
-            // 重新获取信息
-            this.getPageUser()
-            // this.follow = response.data.data
-            // console.log("follow = " + this.follow)
-
+            this.isFollow = !this.isFollow
+            this.getFollowedCollection()
           }else if (response.data.status === 10) {
-            window.location.href = '/login'
+            // 未登录
+            this.$router.push({
+              path: '/login',
+              query: {
+                redirect: this.$router.currentRoute.fullPath
+              }
+            })
           }
         }, response => {
           console.log('error')

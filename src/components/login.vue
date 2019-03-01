@@ -6,23 +6,24 @@
     <input type="text" id="username" class="form-control" placeholder="用户名" required autofocus v-model="username">
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" id="inputPassword" class="form-control" placeholder="密码" required v-model="password">
-    <!--<div class="checkbox mb-3 float-left">-->
-    <!--<label>-->
-    <!--<input type="checkbox" value="remember-me"> 记住我-->
-    <!--</label>-->
-    <!--</div>-->
+    <div class="checkbox mb-3 float-left">
+      <label>
+        <input type="checkbox" value="rememberMe" v-model="rememberMe" checked><span class="rememberMeText">记住我</span>
+      </label>
+    </div>
     <button class="btn btn-lg btn-primary btn-block" style="margin-top: 28px;" type="button" @click="submit">登入</button>
     <a href="/register" class="float-right" style="margin-top: 12px">去注册</a>
-    <p class="mt-5 mb-3" style="color: #ccc">&copy; 2017-2018</p>
+    <p class="mt-5 mb-3" style="color: #ccc">&copy; 2017-2019</p>
   </form>
 </template>
 
 <script>
-  // 1.导入header.vue
+  // 1.导入header.vue  @将指向到项目的src文件夹
   // import header from './header/header'
   // import '@/styles/css/login.css'
   // import '@/styles/css/animate.min.css'
   import * as toastr from '@/styles/toastr/toastr.min'
+  import store from '@/store/store'
   export default {
     name: 'login',
     components: {
@@ -32,40 +33,62 @@
     data () {
       return {
         username: '',
-        password: ''
+        password: '',
+        rememberMe: false
       }
     },
     mounted: function () {
       console.log('username=' + this.username + ',password=' + this.password)
     },
     methods: {
+      valid: function () {
+        if (this.username.trim().length === 0) {
+          toastr.warning('用户名不能未空')
+          return false
+        }
+        if (this.password.trim().length === 0) {
+          toastr.warning('密码不能未空')
+          return false
+        }
+        return true
+      },
       submit: function () {
-        // alert('username=' + this.username + ',password=' + this.password)
-        // console.log('username=' + this.username + ',password=' + this.password)
+        // 验证合法
+        if (!this.valid()) {
+          return
+        }
         // 请求登入
-        this.$http.post(`${process.env.API_ROOT}/user/login.do`, {
-          // this.$http.jsonp(`${process.env.API_ROOT}/user/login.do`, {
+        this.$http.post(`${process.env.API_ROOT}/login`, {
           'username': this.username,
-          'password': this.password
+          'password': this.password,
+          'rememberMe': this.rememberMe
         }, {emulateJSON: true}).then(response => {
           console.log(response.data)
           if (response.data.status === 0) {
+            // 调用setLoginUser，保存把用户信息
+            store.commit('setLoginUser', response.data.data)
+            console.log('登录成功')
+            // 获取user
+            // const user = store.getters.getUser
+            // console.log(user.username)
             // 登入成功，跳转到首页
-            window.location.href = '/'
+            // this.$router.push({path: '/'})
+            this.$router.push(this.$route.query.redirect || '/')
           } else if (response.data.status === 1) {
-            toastr.error(response.data.msg)
             // 用户名或密码错误
+            toastr.warning(response.data.msg)
           }
-          // this.$router.push('/')
-          // this.$router.go(-1)
-          // this.$router.go(0)
-          // sessionStorage.setItem('token', response.data.data)
-          // document.cookie = 'SESSION=' + response.data.data
-          // get body data
-          // this.someData = response.body;
         }, response => {
           console.log('error')
         })
+      },
+      setCookie: function (cname, cvalue, exdays) {
+        var d = new Date()
+        d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000))
+        var expires = 'exdays=' + d.toUTCString()
+        console.info(cname + '=' + cvalue + '; ' + expires)
+        document.cookie = cname + '=' + cvalue + '; ' + expires
+        console.info(document.cookie)
       }
     }
   }
@@ -142,6 +165,10 @@
   }
 
   .title{
+    color: #444;
+  }
+  .rememberMeText{
+    margin-left: 5px;
     color: #444;
   }
 </style>
