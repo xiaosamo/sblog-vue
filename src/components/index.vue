@@ -117,17 +117,36 @@
 
           <!--热门标签-->
           <div class="container-fluid hot-tag">
-            <span>热门标签</span>
-            <div class="list-group">
-              <a href="#" class="list-group-item list-group-item-danger col-lg-3">python</a>
-              <a href="#" class="list-group-item list-group-item-info col-lg-3">spring</a>
-              <a href="#" class="list-group-item list-group-item-success col-lg-3">java</a>
-              <a href="#" class="list-group-item list-group-item-warning col-lg-3">kotlin</a>
-              <a href="#" class="list-group-item list-group-item-info col-lg-3">spring</a>
-              <a href="#" class="list-group-item list-group-item-success col-lg-3">java</a>
-              <a href="#" class="list-group-item list-group-item-warning col-lg-3">kotlin</a>
-              <a href="#" class="list-group-item list-group-item-danger col-lg-3">python</a>
+            <span style="margin-bottom: 5px;">热门标签</span>
+            <div>
+              <span :class="tag.cssClass" style="margin-right: 3px;margin-top: 8px;" v-for="tag in tags" :key="tag.id">{{tag.name}}</span>
+              <!--<span class="badge badge-secondary">Bootstrap</span>-->
+              <!--<span class="badge badge-success">Success</span>-->
+              <!--<span class="badge badge-danger">SpringBoot</span>-->
+              <!--<span class="badge badge-warning">Warning</span>-->
+              <!--<span class="badge badge-info">Info</span>-->
+              <!--<span class="badge badge-light">Light</span>-->
+              <!--<span class="badge badge-dark">Dark</span>-->
+
+              <!--<span class="badge badge-primary">Primary</span>-->
+              <!--<span class="badge badge-secondary">Secondary</span>-->
+              <!--<span class="badge badge-success">Success</span>-->
+              <!--<span class="badge badge-danger">Danger</span>-->
+              <!--<span class="badge badge-warning">Warning</span>-->
+              <!--<span class="badge badge-info">Info</span>-->
+              <!--<span class="badge badge-light">Light</span>-->
+              <!--<span class="badge badge-dark">Dark</span>-->
             </div>
+            <!--<div class="list-group">-->
+              <!--<a href="#" class="list-group-item list-group-item-danger col-lg-3">python</a>-->
+              <!--<a href="#" class="list-group-item list-group-item-info col-lg-3">spring</a>-->
+              <!--<a href="#" class="list-group-item list-group-item-success col-lg-3">java</a>-->
+              <!--<a href="#" class="list-group-item list-group-item-warning col-lg-3">kotlin</a>-->
+              <!--<a href="#" class="list-group-item list-group-item-info col-lg-3">spring</a>-->
+              <!--<a href="#" class="list-group-item list-group-item-success col-lg-3">java</a>-->
+              <!--<a href="#" class="list-group-item list-group-item-warning col-lg-3">kotlin</a>-->
+              <!--<a href="#" class="list-group-item list-group-item-danger col-lg-3">python</a>-->
+            <!--</div>-->
           </div>
         </div>
       </div>
@@ -165,6 +184,7 @@
         popularUserList: [],
         categories: [], // 分类列表
         categoryId: 10000,
+        tags: [], // 标签
         url: '/list?sort=newest', // 当前url
         links: [
           {
@@ -213,6 +233,9 @@
 
       // 获取分类
       this.getCategories()
+
+      // 获取标签
+      this.getTags()
     },
     watch: {
       $route (to, from) {
@@ -363,10 +386,19 @@
       },
       // 获取分类
       getCategories: function () {
-        // 请求登入
         this.$http.get(`${process.env.API_ROOT}/categories`).then(response => {
           if (response.data.status === 0) {
             this.categories = response.data.data
+          }
+        }, response => {
+          console.log('error')
+        })
+      },
+      // 获取所有的标签
+      getTags: function () {
+        this.$http.get(`${process.env.API_ROOT}/tags`).then(response => {
+          if (response.data.status === 0) {
+            this.tags = response.data.data
           }
         }, response => {
           console.log('error')

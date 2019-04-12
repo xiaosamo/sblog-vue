@@ -123,16 +123,9 @@
 
           <!--热门标签-->
           <div class="container-fluid hot-tag">
-            <span>热门标签</span>
-            <div class="list-group">
-              <a href="#" class="list-group-item list-group-item-danger col-lg-3">python</a>
-              <a href="#" class="list-group-item list-group-item-info col-lg-3">spring</a>
-              <a href="#" class="list-group-item list-group-item-success col-lg-3">java</a>
-              <a href="#" class="list-group-item list-group-item-warning col-lg-3">kotlin</a>
-              <a href="#" class="list-group-item list-group-item-info col-lg-3">spring</a>
-              <a href="#" class="list-group-item list-group-item-success col-lg-3">java</a>
-              <a href="#" class="list-group-item list-group-item-warning col-lg-3">kotlin</a>
-              <a href="#" class="list-group-item list-group-item-danger col-lg-3">python</a>
+            <span style="margin-bottom: 5px;">热门标签</span>
+            <div>
+              <span :class="tag.cssClass" style="margin-right: 3px;margin-top: 8px;" v-for="tag in tags" :key="tag.id">{{tag.name}}</span>
             </div>
           </div>
         </div>
@@ -164,6 +157,7 @@
         articleTotal: 0,
         popularUserList: [],
         categories: [], // 分类列表
+        tags: [], // 标签
         links: [
           {
             text: '登入',
@@ -189,6 +183,9 @@
       // 热门用户
       this.getPopularUser()
       this.getCategories()
+
+      // 获取标签
+      this.getTags()
     },
     watch: {
       // 'query': function (now) {
@@ -254,6 +251,16 @@
         this.$http.get(`${process.env.API_ROOT}/categories`).then(response => {
           if (response.data.status === 0) {
             this.categories = response.data.data
+          }
+        }, response => {
+          console.log('error')
+        })
+      },
+      // 获取所有的标签
+      getTags: function () {
+        this.$http.get(`${process.env.API_ROOT}/tags`).then(response => {
+          if (response.data.status === 0) {
+            this.tags = response.data.data
           }
         }, response => {
           console.log('error')
