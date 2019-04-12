@@ -77,20 +77,34 @@
         <div class="col-md-4 right-text">
           <!--热门用户-->
           <div class="container-fluid hot-user">
-            <span>热门用户</span>
-            <ul class="form-group">
-              <li v-for="popularUser in popularUserList" :key="popularUser.userId">
-                <a class="hot-user-img" :href="'/user/'+popularUser.userId">
-                  <img class="img-circle" v-bind:src="popularUser.userImg" alt="">
-                </a>
-                <a class="hot-user-name" :href="'/user/'+popularUser.userId">{{popularUser.userName}}</a>
-                <small>写了<span>{{popularUser.count}}</span>篇文章</small>
-                <!--<a class="follow" href="">私信</a>-->
-              </li>
+            <!--<span>热门用户</span>-->
+            <!--<ul class="form-group">-->
+              <!--<li v-for="popularUser in popularUserList" :key="popularUser.userId">-->
+                <!--<a class="hot-user-img" :href="'/user/'+popularUser.userId">-->
+                  <!--<img class="img-circle" v-bind:src="popularUser.userImg" alt="">-->
+                <!--</a>-->
+                <!--<a class="hot-user-name" :href="'/user/'+popularUser.userId">{{popularUser.userName}}</a>-->
+                <!--<small>写了<span>{{popularUser.count}}</span>篇文章</small>-->
+                <!--&lt;!&ndash;<a class="follow" href="">私信</a>&ndash;&gt;-->
+              <!--</li>-->
 
+            <!--</ul>-->
+            <span>热门用户</span>
+            <ul class="list-group mb-3">
+              <li class="list-group-item d-flex justify-content-between lh-condensed popular-user" v-for="user in popularUserList" :key="user.id">
+                <div>
+                  <!--<h6 class="my-0">Product name</h6>-->
+                  <b-img rounded="circle" width="48" height="48" :src="user.avatar" alt="img" class="img"/>
+                  <small class="text-muted">{{user.name}}</small>
+                </div>
+                <div>
+                  <!--<span class="text-muted" style="">获赞数 520 </span>-->
+                  <span class="text-muted" style="">访问量 100</span>
+
+                </div>
+              </li>
             </ul>
           </div>
-
           <!--文章分类-->
           <div class="container-fluid article-category">
             <span>文章分类</span>
@@ -98,7 +112,7 @@
               <!--<div v-for="category in categories" :key="category.id">-->
               <a href="javascript:void(0);" class="category list-group-item"
                  v-for="category in categories" :key="category.id"
-                 @click="getCategoryArticle(category.name)"
+                 @click="getCategoryArticle(category.id)"
               >
                 {{category.name}}
               </a>
@@ -147,6 +161,7 @@
     data () {
       return {
         articleList: [],
+        articleTotal: 0,
         popularUserList: [],
         categories: [], // 分类列表
         links: [
@@ -160,7 +175,8 @@
           }
         ],
         // 搜索词
-        query: ''
+        query: '',
+        categoryId: 10000,
       }
     },
     mounted: function () {
@@ -171,7 +187,7 @@
       // 获取首页文章
       // this.getIndexArticle()
       // 热门用户
-      // this.getPopularUser()
+      this.getPopularUser()
       this.getCategories()
     },
     watch: {
@@ -188,9 +204,9 @@
     },
     methods: {
       getPopularUser: function () {
-        this.$http.get(`${process.env.API_ROOT}/user/get_popular_user.do`).then(response => {
-          console.log(response.data.data)
-          this.popularUserList = response.data.data.list
+        this.pageNum = 1
+        this.$http.get(`${process.env.API_ROOT}/user/getPopularUser`).then(response => {
+          this.popularUserList = response.data.data
           // get body data
           // this.someData = response.body;
         }, response => {
@@ -251,6 +267,38 @@
             // alert(this.query)
             // alert('回车，kw=' + this.query)
             this.articleList = response.data.data.list
+          }
+        }, response => {
+          console.log('error')
+        })
+      },
+      // 获取分类文章
+      getCategoryArticle: function (categoryId) {
+        this.categoryId = categoryId
+        this.url = `/getCategoryArticles?categoryId=` + categoryId
+        this.$http.get(`${process.env.API_ROOT}/article/getCategoryArticles?categoryId=` + categoryId).then(response => {
+          if (response.data.status === 0) {
+            console.log('关注的用户文章：')
+            console.log(response.data.data)
+            // 修改url,replaceState是将指定的URL替换当前的URL,window.location.pathname获取当前url地址
+            // window.history.pushState(
+            //   'index',
+            //   // {'index'},
+            //   document.title,
+            //   window.location.pathname + '/category/' + categoryId
+            // )
+
+            window.history.replaceState(
+              {category: ''},
+              document.title,
+              // window.location.pathname + '?category/' + categoryId
+              '/category/' + categoryId
+            )
+
+            this.articleList = response.data.data.list
+            this.articleTotal = response.data.data.total
+          } else {
+            alert('error')
           }
         }, response => {
           console.log('error')

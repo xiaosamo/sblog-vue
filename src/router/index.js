@@ -43,7 +43,7 @@ export default new Router({
     },
     {
       // 更新博客
-      path: '/blog/edit/:id',
+      path: '/editor/:id',
       name: 'updateBlog',
       component: () => import('@/components/blog/update')
     },

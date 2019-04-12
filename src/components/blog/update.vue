@@ -33,7 +33,7 @@
         <label>博客分类:</label>
         <select name="type" id="type" v-model="categoryId" @change="getCategoryId">
           <!--分类-->
-          <option v-for="category in categoryList"
+          <option v-for="category in categories"
                   :key="category.id"
                   :value="category.id"
           >
@@ -75,7 +75,7 @@
           opacity: 0.3,
           display: 'block'
         },
-        categoryList: [], // 分类列表
+        categories: [], // 分类列表
         categoryId: '' // 选中的分类id
       }
     },
@@ -126,12 +126,12 @@
           if (response.data.status === 0) {
             this.article = response.data.data
             this.title = response.data.data.title
-            this.editor.setValue(response.data.data.htmlContent)
+            this.editor.setValue(response.data.data.content)
             this.articleImg = response.data.data.img
             this.isVedio = response.data.data.isVedio
 
             // 选中分类
-            this.categoryId = response.data.data.categoryId
+            this.categoryId = response.data.data.category.id
 
             if (this.articleImg.length > 0) {
               this.imgDom.opacity = 1
@@ -144,18 +144,28 @@
         })
       },
       updateArticle: function () {
-        this.$http.post(`${process.env.API_ROOT}/article/update.do`, {
+        this.$http.post(`${process.env.API_ROOT}/article/` + this.id, {
           'id': this.article.id,
           'title': this.title,
-          'content': $('.simditor-body').text(), // text内容
+          // 'content': $('.simditor-body').text(), // text内容
+          'content': this.editor.getValue(), // text内容
           'htmlContent': this.editor.getValue(),
           'categoryId': this.categoryId,
-          'img': this.articleImg,
-          'isVedio': this.isVedio
+          'img': this.articleImg
         }, {emulateJSON: true}).then(response => {
           console.log(response.data)
           if (response.data.status === 0) {
             window.location.href = `/article/` + this.article.id
+          } else if (response.data.status === 10) {
+            // 未登录
+            this.$router.push({
+              path: '/login',
+              query: {
+                redirect: this.$router.currentRoute.fullPath
+              }
+            })
+          } else {
+            alert('失败')
           }
         }, response => {
           console.log('error')
@@ -195,11 +205,9 @@
       // 获取分类
       getCategory: function () {
         // 请求登入
-        this.$http.get(`${process.env.API_ROOT}/category/list.do`).then(response => {
-          console.log('分类：')
-          console.log(response.data)
+        this.$http.get(`${process.env.API_ROOT}/categories`).then(response => {
           if (response.data.status === 0) {
-            this.categoryList = response.data.data
+            this.categories = response.data.data
           }
         }, response => {
           console.log('error')

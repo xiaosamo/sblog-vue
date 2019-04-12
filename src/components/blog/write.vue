@@ -130,6 +130,16 @@
           console.log(response.data)
           if (response.data.status === 0) {
             window.location.href = '/'
+          } else if (response.data.status === 10) {
+            // 未登录
+            this.$router.push({
+              path: '/login',
+              query: {
+                redirect: this.$router.currentRoute.fullPath
+              }
+            })
+          } else {
+            alert('失败')
           }
         }, response => {
           console.log('error')

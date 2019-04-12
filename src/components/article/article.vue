@@ -20,8 +20,8 @@
                 </a>
                 <!--<p class="blog-post-meta">2018-6-1 <a href="#"></a></p>-->
                 <a :href="'/user/'+article.user.id" class="article-use">{{article.user.name}}</a>
-                <a :href="'/blog/edit/'+article.id" class="article-edit" v-if="isUser">编辑</a>
-                <a href="javascript:void(0)" id="user-delete" class="user-delete" v-if="isUser" @click="delArticle(article.id)">删除</a>
+                <a :href="'/editor/'+article.id" class="article-edit" v-if="isCurUser()">编辑</a>
+                <a href="javascript:void(0)" id="user-delete" class="user-delete" v-if="isCurUser()" @click="delArticle(article.id)">删除</a>
                 <small class="time">{{ article.createTime | dateFormat}}</small>
               </div>
               <!--文章内容部分-->
@@ -84,7 +84,7 @@
             </div>
           </div><!-- /.blog-main -->
           <!--文章右侧-->
-          <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          <div class="col-sm-4 col-sm-offset-1 blog-sidebar article-right">
             <div class="sidebar-module sidebar-module-inset">
               <h4>关于作者</h4>
               <p text="${articleBlogger.bloggerInfo}">我是一个来自外星人的嗷嗷？？</p>
@@ -92,14 +92,15 @@
             </div>
             <br>
             <br>
-            <div class="sidebar-module">
-              <h4>最新文章</h4>
-              <ol class="list-unstyled" v-for="article in userLatestArticles" :key="article.id">
-                <li style="padding: 1px;">
-                  <a :href="'/article/'+article.id">{{article.title}}</a>
-                </li>
-              </ol>
-            </div>
+            <!--最新文章-->
+            <!--<div class="sidebar-module">-->
+              <!--<h4>最新文章</h4>-->
+              <!--<ol class="list-unstyled" v-for="article in userLatestArticles" :key="article.id">-->
+                <!--<li style="padding: 1px;">-->
+                  <!--<a :href="'/article/'+article.id">{{article.title}}</a>-->
+                <!--</li>-->
+              <!--</ol>-->
+            <!--</div>-->
             <!--<br>-->
             <!--<br>-->
             <!--<div class="sidebar-module">-->
@@ -131,6 +132,7 @@
   import {formatTime} from '../../utils/time'
   import * as toastr from '@/styles/toastr/toastr.min'
   import store from '@/store/store'
+
   export default {
     name: 'article',
     components: {
@@ -165,6 +167,14 @@
       this.getComment()
     },
     methods: {
+      // 文章是否是当前用户的
+      isCurUser: function () {
+        this.loginUser = store.getters.getUser
+        if (this.loginUser != null && this.loginUser.id != null) {
+          return this.loginUser.id === this.article.user.id
+        }
+        return false
+      },
       // 加载文章内容,包括评论
       getArticle: function () {
         this.$http.get(`${process.env.API_ROOT}/article/` + this.id).then(response => {
@@ -222,7 +232,7 @@
       },
       // 删除评论
       delComment: function (id) {
-        this.$http.delete(`${process.env.API_ROOT}/comment/` + id).then(response => {
+        this.$http.delete(`${process.env.API_ROOT}/comment/` + id + `?aid=` + this.id).then(response => {
             if (response.data.status === 0) {
               // 重新加载评论
               this.getComment()
@@ -310,11 +320,11 @@
       },
       // 删除文章
       delArticle: function (id) {
-        this.$http.get(`${process.env.API_ROOT}/article/delete.do?id=` + id).then(response => {
+        this.$http.delete(`${process.env.API_ROOT}/article/` + id).then(response => {
             if (response.data.status === 0) {
               window.location.href = '/'
             } else {
-              alert('失败')
+              alert('失败');
             }
           },
           response => {
@@ -534,5 +544,8 @@
   .comment-div div{
     margin-top: 5px;
     margin-bottom: 5px;
+  }
+  .article-right{
+    padding-left: 80px;
   }
 </style>

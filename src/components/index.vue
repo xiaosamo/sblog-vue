@@ -31,6 +31,7 @@
                   <!--<a href="@{'/article/'+${article.articleId}}">-->
                   <!--<a >-->
                   <!--<img class="img-thumbnail img-responsive center-block article-img" src="http://blog.zhangruipeng.me/hexo-theme-icarus/gallery/shoes.jpg"alt="">-->
+
                   <!--文章内容部分-->
                   <div class="item article-card">
                     <!--用户头像-->
@@ -77,17 +78,25 @@
           <!--热门用户-->
           <div class="container-fluid hot-user">
             <span>热门用户</span>
-            <ul class="form-group">
-              <li v-for="popularUser in popularUserList" :key="popularUser.userId">
-                <a class="hot-user-img" :href="'/user/'+popularUser.userId">
-                  <img class="img-circle" v-bind:src="popularUser.userImg" alt="">
-                </a>
-                <a class="hot-user-name" :href="'/user/'+popularUser.userId">{{popularUser.userName}}</a>
-                <small>写了<span>{{popularUser.count}}</span>篇文章</small>
-                <!--<a class="follow" href="">私信</a>-->
-              </li>
+            <ul class="list-group mb-3">
+              <li class="list-group-item d-flex justify-content-between lh-condensed popular-user" v-for="user in popularUserList" :key="user.id">
+                <div>
+                  <!--<h6 class="my-0">Product name</h6>-->
+                  <a :href="'/user/'+user.id">
+                    <b-img rounded="circle" width="48" height="48" :src="user.avatar" alt="img" class="img"/>
+                  </a>
+                  <a :href="'/user/'+user.id">
+                    <small class="text-muted">{{user.name}}</small>
+                  </a>
+                </div>
+                <div>
+                  <!--<span class="text-muted" style="">获赞数 520 </span>-->
+                  <span class="text-muted" style="vertical-align:middle;padding-top: 20px;">写了{{user.articleNum}}篇文章</span>
 
+                </div>
+              </li>
             </ul>
+
           </div>
 
           <!--文章分类-->
@@ -97,7 +106,7 @@
               <!--<div v-for="category in categories" :key="category.id">-->
               <a href="javascript:void(0);" class="category list-group-item"
                  v-for="category in categories" :key="category.id"
-                 @click="getCategoryArticle(category.name)"
+                 @click="getCategoryArticle(category.id)"
               >
                 {{category.name}}
               </a>
@@ -155,6 +164,8 @@
         articleList: [],
         popularUserList: [],
         categories: [], // 分类列表
+        categoryId: 10000,
+        url: '/list?sort=newest', // 当前url
         links: [
           {
             text: '登入',
@@ -192,17 +203,16 @@
       // }
     },
     mounted: function () {
+      // 加载更多
       window.addEventListener('scroll', this.handleScroll)
       // console.log('username=' + this.username + ',password=' + this.password)
       // 获取文章
       this.init()
       // 热门用户
-      // this.getPopularUser()
+      this.getPopularUser()
 
       // 获取分类
       this.getCategories()
-
-      this.handleScroll()
     },
     watch: {
       $route (to, from) {
@@ -234,9 +244,8 @@
           // TODO
           // this.pageNum = Math.ceil(this.articleList.length / 10 + 1)
           if (this.articleList.length < this.articleTotal) {
-            this.pageNum = this.pageNum + 1
-            // alert("加载第" + this.pageNum + "页")
-            this.getMoreArticle(this.pageNum)
+            // alert("加载第" + (this.pageNum + 1) + "页")
+            this.getMoreArticle(this.pageNum + 1)
           }
 
           // alert(this.articleList.length)
@@ -251,11 +260,9 @@
         }
       },
       getPopularUser: function () {
-        console.log('store=')
-        console.log(store.getters.id)
-        this.$http.get(`${process.env.API_ROOT}/user/get_popular_user.do`).then(response => {
-          console.log(response.data.data)
-          this.popularUserList = response.data.data.list
+        this.pageNum = 1
+        this.$http.get(`${process.env.API_ROOT}/user/getPopularUser`).then(response => {
+          this.popularUserList = response.data.data
           // get body data
           // this.someData = response.body;
         }, response => {
@@ -264,6 +271,7 @@
       },
       // 初始化文章
       init: function () {
+        this.pageNum = 1
         // alert('path' + this.$route.path + '，  sort=' + this.$route.query.sort)
         // console.log('path = ' + this.$route.path)
         // console.log('rememberMe')
@@ -275,11 +283,12 @@
           // /index
           this.getIndexArticle()
         } else if (/category/g.test(this.$route.path)) {
+          // alert('分类')
           // /.../.test() 正则表达式g 执行全局匹配
           console.log('/category')
-          // console.log('split' + this.$route.path.split('/'))
+          console.log('split' + this.$route.path.split('/'))
           // console.log('split' + this.$route.path.split('/')[0])
-          // console.log('split' + this.$route.path.split('/')[1])
+          console.log('split' + this.$route.path.split('/')[1])
           // console.log('split' + this.$route.path.split('/')[2])
           // 查找分类文章
           this.getCategoryArticle(this.$route.path.split('/')[2])
@@ -288,6 +297,7 @@
         }
       },
       getIndexArticle: function () {
+        this.pageNum = 1
         this.sort = this.$route.query.sort
         // 验证sort参数
         if (this.sort !== undefined) {
@@ -298,15 +308,17 @@
           }
         }
         var url = `${process.env.API_ROOT}/article/list`
+        this.url = '/list?sort=newest'
         if (this.sort !== undefined) {
           url = url + `?sort=` + this.sort
+          this.url = '/list?sort=' + this.sort
         }
         // 最新文章
         this.$http.get(url).then(response => {
           if (response.data.status === 0) {
             this.articleList = response.data.data.list
             // alert(this.articleList[0].user[0].avatar)
-            // this.articleTotal = response.data.data.total
+            this.articleTotal = response.data.data.total
           }
         }, response => {
           console.log('error')
@@ -314,22 +326,32 @@
       },
       // 下拉加载更多文章
       getMoreArticle: function (pageNum) {
-        this.$http.get(`${process.env.API_ROOT}/article/list.do?sort=` + this.sort + `&pageNum=` + pageNum).then(response => {
-          if (response.data.status === 0) {
-            // alert("length =" + response.data.data.list.length)
-            // this.articleList = this.articleList +    response.data.data.list
-            for (var i = 0; i < response.data.data.list.length; i++) {
-              this.articleList.push(response.data.data.list[i])
-            }
-            // this.articleList.push(response.data.data.list)
-            // console.log("下拉加载更多的数据:")
-            // console.log(response.data.data.list)
-            // console.log("list现在的数据 ：")
-            // console.log(this.articleList)
+        if (this.sort === undefined) {
+          this.sort = 'newest'
+        }
+        // alert(this.$route.path + " " + this.$route.params)
+        // alert(this.$route.path)
+        // alert(this.url)
+        // alert(window.location.href)
+
+        this.$http.get(`${process.env.API_ROOT}/article` + this.url + `&pageNum=` + pageNum).then(response => {
+        // this.$http.get(`${process.env.API_ROOT}/article/list?sort=` + this.sort + `&pageNum=` + pageNum).then(response => {
+        if (response.data.status === 0) {
+          // alert("length =" + response.data.data.list.length)
+          // this.articleList = this.articleList +    response.data.data.list
+          for (var i = 0; i < response.data.data.list.length; i++) {
+            this.articleList.push(response.data.data.list[i])
           }
+          this.pageNum = response.data.data.pageNum
+          // this.articleList.push(response.data.data.list)
+          // console.log("下拉加载更多的数据:")
+          // console.log(response.data.data.list)
+          // console.log("list现在的数据 ：")
+          // console.log(this.articleList)
+        }
         }, response => {
           console.log('加载更多文章失败')
-        })
+        });
       },
       // 当点击搜索时触发
       handleChange: function (article) {
@@ -352,9 +374,11 @@
       },
       // 获取用户关注对象的文章
       followArticle: function () {
+        this.url = '/getFollowArticle'
         this.$http.get(`${process.env.API_ROOT}/article/getFollowArticle`).then(response => {
           if (response.data.status === 0) {
             this.articleList = response.data.data.list
+            this.articleTotal = response.data.data.total
           } else if (response.data.status === 10) {
             // 未登录
             this.$router.push({
@@ -371,8 +395,10 @@
         })
       },
       // 获取分类文章
-      getCategoryArticle: function (categoryName) {
-        this.$http.get(`${process.env.API_ROOT}/article/get_category_article.do?categoryName=` + categoryName).then(response => {
+      getCategoryArticle: function (categoryId) {
+        this.categoryId = categoryId
+        this.url = `/getCategoryArticles?categoryId=` + categoryId
+        this.$http.get(`${process.env.API_ROOT}/article/getCategoryArticles?categoryId=` + categoryId).then(response => {
           if (response.data.status === 0) {
             console.log('关注的用户文章：')
             console.log(response.data.data)
@@ -381,17 +407,18 @@
             //   'index',
             //   // {'index'},
             //   document.title,
-            //   window.location.pathname + '/category/' + categoryName
+            //   window.location.pathname + '/category/' + categoryId
             // )
 
             window.history.replaceState(
               {category: ''},
               document.title,
-              // window.location.pathname + '?category/' + categoryName
-              '/category/' + categoryName
+              // window.location.pathname + '?category/' + categoryId
+              '/category/' + categoryId
             )
 
             this.articleList = response.data.data.list
+            this.articleTotal = response.data.data.total
           } else {
             alert('error')
           }
@@ -404,4 +431,8 @@
 </script>
 
 <style scoped>
+  .popular-user{
+    border: none;
+    padding: 5px;
+  }
 </style>
