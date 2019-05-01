@@ -273,7 +273,7 @@
             // alert('222')
             // alert(this.query)
             // alert('回车，kw=' + this.query)
-            this.articleList = response.data.data.list
+            this.articleList = response.data.data
           }
         }, response => {
           console.log('error')
